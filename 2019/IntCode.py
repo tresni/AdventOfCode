@@ -19,13 +19,13 @@ class IntCode(object):
     @property
     def inputs(self):
         val = next(self._input)
-        if val:
+        if val is not None:
             return val
         else:
             return input("Input: ")
 
     @inputs.setter
-    def inputs(self, *inputs):
+    def inputs(self, inputs):
         self._input = iter(inputs)
 
 
@@ -88,7 +88,7 @@ class IntCode(object):
         else:
             return self._instructions
 
-def operate(opcodes, inputs=None):
+def operate(opcodes, *inputs):
     ic = IntCode(opcodes)
     ic.inputs = inputs
     ic.operate()
