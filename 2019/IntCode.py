@@ -34,14 +34,11 @@ class IntCode(object):
                 opcodes[opcodes[n+3]] = prod(self._getParams(opcodes[n+1:n+3], mode))
                 n += 4
             elif opcode == 3: # Input
-                print(f"{self.name} INPUT WAIT")
                 result = self.input.get()
                 opcodes[opcodes[n+1]] = int(result)
-                print(f"{self.name} INPUT {result}")
                 n += 2
             elif opcode == 4: # Output
                 output = self._getParams(opcodes[n+1:n+2], mode)
-                print(f"{self.name} OUTPUT: {output}")
                 self.output.put_nowait(*output)
                 n += 2
             elif opcode == 5: # Jump-if-True
@@ -71,7 +68,6 @@ class IntCode(object):
                     opcodes[opcodes[n+3]] = 0
                 n += 4
             elif opcode == 99:
-                print(f"{self.name} EXIT")
                 return
             else:
                 print(f"Fuck {n}:{opcodes[n]}")

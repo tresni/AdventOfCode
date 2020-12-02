@@ -1,5 +1,6 @@
 from IntCode import operate, IntCode
 from itertools import permutations
+from threading import Thread
 
 def max_thruster(instructions, phases):
     result = 0
@@ -25,28 +26,35 @@ for seq in permutations(list(range(5))):
 
 print(f"Max signal: {output}")
 
-instructions = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
+def feedback_loop(instructions, phases):
+    initial = None
+    previous = None
+    thread = None
+    for phase in phases:
+        processor = IntCode(
+            list(instructions),
+            previous.output if previous else None)
+        processor.input.put(phase)
+        thread = Thread(target=processor.operate)
+        thread.start()
 
+        if initial == None:
+            initial = processor
+        previous = processor
+    previous.output = initial.input
+    initial.input.put(0)
+    thread.join()
+    return initial.input.get()
 
-a = IntCode(list(instructions), name="A")
-b = IntCode(list(instructions), a.output, name="B")
-c = IntCode(list(instructions), b.output, name="C")
-d = IntCode(list(instructions), c.output, name="D")
-e = IntCode(list(instructions), d.output, a.input, name="E")
-a.input.put(9)
-b.input.put(8)
-c.input.put(7)
-d.input.put(6)
-e.input.put(5)
-a.input.put(0) # This should kick things off
+assert(feedback_loop(
+    [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5],
+    [9,8,7,6,5]) == 139629729)
+assert(feedback_loop(
+    [3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10],
+    [9,7,8,5,6]) == 18216)
 
-from threading import Thread
-Thread(target=a.operate).start()
-Thread(target=b.operate).start()
-Thread(target=c.operate).start()
-Thread(target=d.operate).start()
-last = Thread(target=e.operate)
-last.start()
-last.join() # They should all end at the same time right?
+output = 0
+for seq in permutations(list(range(5, 10))):
+    output = max(output, feedback_loop(list(instructions), seq))
 
-print(a.input.get())
+print(f"Max feedback loop: {output}")
