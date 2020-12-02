@@ -1,9 +1,12 @@
 from math import prod
+from queue import SimpleQueue
 
 class IntCode(object):
-    def __init__(self, instructions):
+    def __init__(self, instructions, input_=None, output=None, name="IntCode"):
         self._instructions = instructions
-        self.output = []
+        self.input = input_ if input_ else SimpleQueue()
+        self.output = output if output else SimpleQueue()
+        self.name = name
 
     def _getParams(self, params, modes):
         result = []
@@ -15,19 +18,6 @@ class IntCode(object):
                 result.append(self._instructions[i])
             modes //= 10
         return result
-
-    @property
-    def inputs(self):
-        val = next(self._input)
-        if val is not None:
-            return val
-        else:
-            return input("Input: ")
-
-    @inputs.setter
-    def inputs(self, inputs):
-        self._input = iter(inputs)
-
 
     def operate(self, *inputs):
         n = 0
@@ -44,10 +34,15 @@ class IntCode(object):
                 opcodes[opcodes[n+3]] = prod(self._getParams(opcodes[n+1:n+3], mode))
                 n += 4
             elif opcode == 3: # Input
-                opcodes[opcodes[n+1]] = int(self.inputs)
+                print(f"{self.name} INPUT WAIT")
+                result = self.input.get()
+                opcodes[opcodes[n+1]] = int(result)
+                print(f"{self.name} INPUT {result}")
                 n += 2
             elif opcode == 4: # Output
-                self.output.append(*self._getParams(opcodes[n+1:n+2], mode))
+                output = self._getParams(opcodes[n+1:n+2], mode)
+                print(f"{self.name} OUTPUT: {output}")
+                self.output.put_nowait(*output)
                 n += 2
             elif opcode == 5: # Jump-if-True
                 results = self._getParams(opcodes[n+1:n+3], mode)
@@ -76,6 +71,7 @@ class IntCode(object):
                     opcodes[opcodes[n+3]] = 0
                 n += 4
             elif opcode == 99:
+                print(f"{self.name} EXIT")
                 return
             else:
                 print(f"Fuck {n}:{opcodes[n]}")
@@ -83,13 +79,21 @@ class IntCode(object):
 
     def result(self):
         # This is bad as you can't tell which you are getting
-        if self.output:
-            return self.output
+        result = []
+        while True:
+            try:
+                result.append(self.output.get_nowait())
+            except:
+                break
+
+        if result:
+            return result
         else:
             return self._instructions
 
 def operate(opcodes, *inputs):
     ic = IntCode(opcodes)
-    ic.inputs = inputs
+    for item in inputs:
+        ic.input.put_nowait(item)
     ic.operate()
     return ic.result()
