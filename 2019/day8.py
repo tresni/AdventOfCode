@@ -31,8 +31,11 @@ composite = ""
 for pixel in range(width * height):
     for l in layers:
         target = l["data"][pixel]
-        if target != "2":
-            composite += target
+        if target == "1":
+            composite += "#"
+            break
+        elif target == "0":
+            composite += " "
             break
 
 for n in range(height):
