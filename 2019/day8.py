@@ -14,13 +14,26 @@ def get_layers(width, height):
         layer.append({
             "zeros": counts[0],
             "ones": counts[1],
-            "twos": counts[2]
+            "twos": counts[2],
+            "data": data
         })
 
     return layer
 
 
-
-layers = get_layers(25, 6)
+width = 25
+height = 6
+layers = get_layers(width, height)
 zeros = min(layers, key=lambda x: x['zeros'])
 print(zeros['ones'] * zeros['twos'])
+
+composite = ""
+for pixel in range(width * height):
+    for l in layers:
+        target = l["data"][pixel]
+        if target != "2":
+            composite += target
+            break
+
+for n in range(height):
+    print(composite[width*n:width*n+width])
