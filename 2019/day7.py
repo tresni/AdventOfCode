@@ -25,6 +25,7 @@ for seq in permutations(list(range(5))):
     output = max(output, max_thruster(list(instructions), seq))
 
 print(f"Max signal: {output}")
+assert(output == 38834)
 
 def feedback_loop(instructions, phases):
     initial = None
@@ -58,3 +59,4 @@ for seq in permutations(list(range(5, 10))):
     output = max(output, feedback_loop(list(instructions), seq))
 
 print(f"Max feedback loop: {output}")
+assert(output == 69113332)

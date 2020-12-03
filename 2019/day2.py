@@ -24,6 +24,7 @@ def hunter(target):
 
 values = hunter(19690720)
 print(values[0]*100 + values[1])
+assert(values[0]*100 + values[1] == 7195)
 
 
 
