@@ -7,30 +7,49 @@ class IntCode(object):
         self.input = input_ if input_ else SimpleQueue()
         self.output = output if output else SimpleQueue()
         self.name = name
+        self.relative = 0
+
+    def readRegister(self, index, count=1):
+        end = index + count
+        l = len(self._instructions)
+        if end >= l:
+            size = (end - l) * 2
+            self._instructions.extend([0, ] * size)
+        return self._instructions[index:end]
+
+    def writeRegister(self, index, value):
+        l = len(self._instructions)
+        if index >= l:
+            size = (index - l) * 2
+            self._instructions.extend([0,] * size)
+
+        self._instructions[index] = value
 
     def _getParams(self, params, modes):
         result = []
         for i in params:
             m = modes % 10
-            if m:
+            if m == 1:
                 result.append(i)
+            elif m == 2:
+                result.append(self.readRegister(self.relative + i)[0])
             else:
-                result.append(self._instructions[i])
+                result.append(self.readRegister(i)[0])
             modes //= 10
         return result
 
     def _operfunc(self, index, mode, func):
-        return func(self._getParams(self._instructions[index+1:index+3], mode))
+        return func(self._getParams(self.readRegister(index+1, 2), mode))
 
     def _jumpfunc(self, index, mode, func):
-        results = self._getParams(self._instructions[index+1:index+3], mode)
+        results = self._getParams(self.readRegister(index+1, 2), mode)
         if func(results[0]):
             return results[1]
         else:
             return index + 3
 
     def _comparefunc(self, index, mode, func):
-        results = self._getParams(self._instructions[index+1:index+3], mode)
+        results = self._getParams(self.readRegister(index+1, 2), mode)
         if func(*results):
             self._instructions[self._instructions[index+3]] = 1
         else:
@@ -46,17 +65,17 @@ class IntCode(object):
             mode = opcode // 100
             opcode = opcode % 100
             if opcode == 1: # Add
-                opcodes[opcodes[n+3]] = self._operfunc(n, mode, sum)
+                self.writeRegister(self.readRegister(n+3)[0], self._operfunc(n, mode, sum))
                 n += 4
             elif opcode == 2: # Multiply
-                opcodes[opcodes[n+3]] = self._operfunc(n, mode, prod)
+                self.writeRegister(self.readRegister(n+3)[0], self._operfunc(n, mode, prod))
                 n += 4
             elif opcode == 3: # Input
                 result = self.input.get()
-                opcodes[opcodes[n+1]] = int(result)
+                self.writeRegister(self.readRegister(n+1)[0], int(result))
                 n += 2
             elif opcode == 4: # Output
-                output = self._getParams(opcodes[n+1:n+2], mode)
+                output = self._getParams(self.readRegister(n+1), mode)
                 self.output.put_nowait(*output)
                 n += 2
             elif opcode == 5: # Jump-if-True
@@ -69,6 +88,9 @@ class IntCode(object):
             elif opcode == 8: # Equals
                 self._comparefunc(n, mode, lambda x, y: x == y)
                 n += 4
+            elif opcode == 9: # Relative Positioning
+                self.relative += self._getParams(self.readRegister(n+1), mode)[0]
+                n += 2
             elif opcode == 99:
                 return
             else:
