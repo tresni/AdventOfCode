@@ -19,6 +19,24 @@ class IntCode(object):
             modes //= 10
         return result
 
+    def _operfunc(self, index, mode, func):
+        return func(self._getParams(self._instructions[index+1:index+3], mode))
+
+    def _jumpfunc(self, index, mode, func):
+        results = self._getParams(self._instructions[index+1:index+3], mode)
+        if func(results[0]):
+            return results[1]
+        else:
+            return index + 3
+
+    def _comparefunc(self, index, mode, func):
+        results = self._getParams(self._instructions[index+1:index+3], mode)
+        if func(*results):
+            self._instructions[self._instructions[index+3]] = 1
+        else:
+            self._instructions[self._instructions[index+3]] = 0
+
+
     def operate(self, *inputs):
         n = 0
         opcodes = self._instructions
@@ -28,10 +46,10 @@ class IntCode(object):
             mode = opcode // 100
             opcode = opcode % 100
             if opcode == 1: # Add
-                opcodes[opcodes[n+3]] = sum(self._getParams(opcodes[n+1:n+3], mode))
+                opcodes[opcodes[n+3]] = self._operfunc(n, mode, sum)
                 n += 4
             elif opcode == 2: # Multiply
-                opcodes[opcodes[n+3]] = prod(self._getParams(opcodes[n+1:n+3], mode))
+                opcodes[opcodes[n+3]] = self._operfunc(n, mode, prod)
                 n += 4
             elif opcode == 3: # Input
                 result = self.input.get()
@@ -42,30 +60,14 @@ class IntCode(object):
                 self.output.put_nowait(*output)
                 n += 2
             elif opcode == 5: # Jump-if-True
-                results = self._getParams(opcodes[n+1:n+3], mode)
-                if results[0]:
-                    n = results[1]
-                else:
-                    n += 3
+                n = self._jumpfunc(n, mode, lambda x: x)
             elif opcode == 6: # Jump-if-False
-                results = self._getParams(opcodes[n+1:n+3], mode)
-                if not results[0]:
-                    n = results[1]
-                else:
-                    n += 3
+                n = self._jumpfunc(n, mode, lambda x: not x)
             elif opcode == 7: # Less Than
-                results = self._getParams(opcodes[n+1:n+3], mode)
-                if results[0] < results[1]:
-                    opcodes[opcodes[n+3]] = 1
-                else:
-                    opcodes[opcodes[n+3]] = 0
+                self._comparefunc(n, mode, lambda x, y: x < y)
                 n += 4
             elif opcode == 8: # Equals
-                results = self._getParams(opcodes[n+1:n+3], mode)
-                if results[0] == results[1]:
-                    opcodes[opcodes[n+3]] = 1
-                else:
-                    opcodes[opcodes[n+3]] = 0
+                self._comparefunc(n, mode, lambda x, y: x == y)
                 n += 4
             elif opcode == 99:
                 return
