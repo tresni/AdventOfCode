@@ -20,10 +20,17 @@ class IntCode(object):
     def writeRegister(self, index, value):
         l = len(self._instructions)
         if index >= l:
-            size = (index - l) * 2
+            size = ((index - l) + 1) * 2
             self._instructions.extend([0,] * size)
 
         self._instructions[index] = value
+
+    def getAddress(self, param, modes):
+        if modes == 2:
+            return self.relative + param
+        else:
+            return param
+
 
     def _getParams(self, params, modes):
         result = []
@@ -51,9 +58,9 @@ class IntCode(object):
     def _comparefunc(self, index, mode, func):
         results = self._getParams(self.readRegister(index+1, 2), mode)
         if func(*results):
-            self._instructions[self._instructions[index+3]] = 1
+            self.writeRegister(self.getAddress(self.readRegister(index+3)[0], mode//100), 1)
         else:
-            self._instructions[self._instructions[index+3]] = 0
+            self.writeRegister(self.getAddress(self.readRegister(index+3)[0], mode//100), 0)
 
 
     def operate(self, *inputs):
@@ -65,14 +72,14 @@ class IntCode(object):
             mode = opcode // 100
             opcode = opcode % 100
             if opcode == 1: # Add
-                self.writeRegister(self.readRegister(n+3)[0], self._operfunc(n, mode, sum))
+                self.writeRegister(self.getAddress(self.readRegister(n+3)[0], mode//100), self._operfunc(n, mode, sum))
                 n += 4
             elif opcode == 2: # Multiply
-                self.writeRegister(self.readRegister(n+3)[0], self._operfunc(n, mode, prod))
+                self.writeRegister(self.getAddress(self.readRegister(n+3)[0], mode//100), self._operfunc(n, mode, prod))
                 n += 4
             elif opcode == 3: # Input
                 result = self.input.get()
-                self.writeRegister(self.readRegister(n+1)[0], int(result))
+                self.writeRegister(self.getAddress(self.readRegister(n+1)[0], mode), int(result))
                 n += 2
             elif opcode == 4: # Output
                 output = self._getParams(self.readRegister(n+1), mode)
