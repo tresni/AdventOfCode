@@ -1,4 +1,7 @@
 import os.path
+from math import atan2, dist, degrees
+from itertools import cycle
+
 
 def field_to_coords(field):
     coords = list()
@@ -8,33 +11,48 @@ def field_to_coords(field):
                 coords.append((x, y))
     return coords
 
+
+info = {}
+
+
+def add_slope_target(asteroid, slope, target):
+    if asteroid not in info:
+        info[asteroid] = {
+            "counter": 1,
+            "slopes": {
+                slope: [
+                    target,
+                ]
+            },
+        }
+    elif slope not in info[asteroid]["slopes"]:
+        info[asteroid]["counter"] += 1
+        info[asteroid]["slopes"][slope] = [
+            target,
+        ]
+    else:
+        info[asteroid]["slopes"][slope].append(target)
+
+
 def find_best(field):
+    info.clear()
     asteroids = field_to_coords(field)
-    counter = {}
     for index in range(len(asteroids) - 1):
         asteroid = asteroids[index]
-        slopes = list()
-        for target in asteroids[index + 1:]:
-            run = asteroid[0] - target[0]
-            if run != 0:
-                slope = (asteroid[1] - target[1]) / run
-            else:
-                slope = None
+        for target in asteroids[index + 1 :]:
 
-            if slope in slopes:
-                continue
-            slopes.append(slope)
-            if asteroid not in counter:
-                counter[asteroid] = 1
-            else:
-                counter[asteroid] += 1
-            if target not in counter:
-                counter[target] = 1
-            else:
-                counter[target] += 1
+            rad = degrees(atan2(asteroid[1] - target[1], asteroid[0] - target[0]))
+            reverse = degrees(atan2(target[1] - asteroid[1], target[0] - asteroid[0]))
 
-    best = max(counter, key=lambda x: counter[x])
-    return (best, counter[best])
+            add_slope_target(asteroid, rad, target)
+            add_slope_target(target, reverse, asteroid)
+
+    best = max(info, key=lambda x: info[x]["counter"])
+    return (best, info[best]["counter"], info[best]["slopes"])
+
+
+assert find_best(["#", ".", "#", ".", "#"])[0] == (0, 2)
+assert find_best(["#.#.#"])[0] == (2, 0)
 
 for i in range(5):
     with open(os.path.join(os.path.dirname(__file__), f"test{i}.txt"), "r") as fp:
@@ -43,8 +61,31 @@ for i in range(5):
         coord = coord.split(",")
 
         field = fp.readlines()
-        assert(((int(coord[0]), int(coord[1])), int(count)) == find_best(field))
+        best = find_best(field)
+        assert ((int(coord[0]), int(coord[1])), int(count)) == best[:2]
 
 with open(os.path.join(os.path.dirname(__file__), "day10.txt"), "r") as fp:
     field = fp.readlines()
-    print(find_best(field))
+    best = find_best(field)
+    assert best[1] == 299
+
+    for x in best[2]:
+        best[2][x] = sorted(best[2][x], key=lambda x: dist(x, best[0]))
+
+    slopes = sorted(best[2].keys())
+    cycler = cycle(slopes)
+    slope = None
+    for slope in cycler:
+        if slope >= 90:
+            break
+
+    exploded = 0
+    while True:
+        if len(best[2][slope]) > 0:
+            exploded += 1
+            if exploded == 200:
+                print(best[2][slope][0])
+                break
+
+            del best[2][slope][0]
+        slope = next(cycler)
