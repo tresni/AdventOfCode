@@ -41,5 +41,23 @@ test = [
 ]
 assert xmas(test, 5) == 127
 
+def weakness(key, data):
+    block = []
+    for i in range(len(data)):
+        value = data[i]
+        for j in range(i+1, len(data)):
+            value += data[j]
+            if value == key:
+                block = data[i:j+1]
+    block = sorted(block)
+    return block[0], block[-1]
+
 with open(os.path.join(os.path.dirname(__file__), os.path.splitext(os.path.basename(__file__))[0] + ".txt")) as fp:
-    print(xmas([int(line) for line in  fp.readlines()]))
+    lines = [int(line) for line in  fp.readlines()]
+    key = xmas(lines)
+    assert key == 466456641
+    weak = weakness(key, lines)
+    print(weak[0] + weak[1])
+
+
+
