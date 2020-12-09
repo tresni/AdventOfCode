@@ -226,4 +226,5 @@ def find_three(possible, target):
 
 results = find_three(possible, 2020)
 from functools import reduce
-print(results, reduce(lambda x, y: x*y, results))
+assert results == (250, 485, 1285)
+assert reduce(lambda x, y: x*y, results) == 155806250
