@@ -33,27 +33,16 @@ def find_bus(test):
 
 
 def contest(data):
-    pass
-    # find max number in list
-    # find detla from current to max number
-    # iterate on that?
-    schedule = [int(x) if x != "x" else x for x in data[1].split(",")]
-    buses = list(filter(lambda x: x != "x", schedule))
-    premium = max(buses)
-
-    firstbus = premium - schedule.index(premium)
-    while True:
-        time = firstbus
-        found = True
-        for bus in schedule:
-            if type(bus) == int and time % bus:
-                found = False
-                break
-            time += 1
-        if found:
-            return firstbus
-
-        firstbus += premium
+    schedule = [int(x) if x != "x" else 1 for x in data[1].split(",")]
+    timestamp = 0
+    offset = 1
+    increment = schedule[0]
+    while offset < len(schedule):
+        timestamp += increment
+        if (timestamp + offset) % schedule[offset] == 0:
+            increment = math.lcm(increment, schedule[offset])
+            offset += 1
+    return timestamp
 
 
 assert(find_bus(test) == 295)
