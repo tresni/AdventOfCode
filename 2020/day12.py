@@ -17,44 +17,40 @@ test = [
     "F11",
 ]
 
-NORTH = 0
-EAST = 90
-SOUTH = 180
-WEST = 270
-
 
 class Ship(object):
-    heading = EAST
     x = 0
     y = 0
 
-    def rotate(self, degree):
-        self.heading += degree
-        self.heading %= 360
+    w_x = 10
+    w_y = 1
+
+    def rotate(self, degree, clockwise):
+        degree %= 360
+        while degree > 0:
+            self.w_x, self.w_y = self.w_y, self.w_x
+            if clockwise:
+                self.w_y *= -1
+            else:
+                self.w_x *= -1
+            degree -= 90
 
     def cardinal(self, direction, distance):
         if direction == "N":
-            self.y += distance
+            self.w_y += distance
         elif direction == "S":
-            self.y -= distance
+            self.w_y -= distance
         elif direction == "E":
-            self.x += distance
+            self.w_x += distance
         elif direction == "W":
-            self.x -= distance
+            self.w_x -= distance
         else:
             print(f"What have you done?! {direction} {distance}")
 
     def forward(self, distance):
-        if self.heading == NORTH:
-            self.y += distance
-        elif self.heading == SOUTH:
-            self.y -= distance
-        elif self.heading == EAST:
-            self.x += distance
-        elif self.heading == WEST:
-            self.x -= distance
-        else:
-            print(f"Ya done fucked up! {self.heading} {distance}")
+        for _ in range(distance):
+            self.y += self.w_y
+            self.x += self.w_x
 
     def sail(self, commands):
         for line in commands:
@@ -62,9 +58,9 @@ class Ship(object):
             if command == "F":
                 self.forward(argument)
             elif command == "R":
-                self.rotate(argument)
+                self.rotate(argument, True)
             elif command == "L":
-                self.rotate(-argument)
+                self.rotate(argument, False)
             else:
                 self.cardinal(command, argument)
 
@@ -75,7 +71,7 @@ class Ship(object):
 ship = Ship()
 ship.sail(test)
 print(ship.x, ship.y, ship.manhattan())
-assert(ship.manhattan() == 25)
+assert(ship.manhattan() == 286)
 
 ship = Ship()
 ship.sail(data)
