@@ -32,5 +32,37 @@ def find_bus(test):
     return delta * minimum[0]
 
 
+def contest(data):
+    pass
+    # find max number in list
+    # find detla from current to max number
+    # iterate on that?
+    schedule = [int(x) if x != "x" else x for x in data[1].split(",")]
+    buses = list(filter(lambda x: x != "x", schedule))
+    premium = max(buses)
+
+    firstbus = premium - schedule.index(premium)
+    while True:
+        time = firstbus
+        found = True
+        for bus in schedule:
+            if type(bus) == int and time % bus:
+                found = False
+                break
+            time += 1
+        if found:
+            return firstbus
+
+        firstbus += premium
+
+
 assert(find_bus(test) == 295)
 print(find_bus(data))
+
+assert(contest(test) == 1068781)
+assert(contest(["", "17,x,13,19"]) == 3417)
+assert(contest(["", "67,7,59,61"]) == 754018)
+assert(contest(["", "67,x,7,59,61"]) == 779210)
+assert(contest(["", "67,7,x,59,61"]) == 1261476)
+assert(contest(["", "1789,37,47,1889"]) == 1202161486)
+print(contest(data))
