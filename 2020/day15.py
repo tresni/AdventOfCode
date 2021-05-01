@@ -3,16 +3,16 @@ data = [15, 5, 1, 4, 7, 0]
 
 def elvish(start, rounds):
     known = {}
+    target = start.pop()
     for n in range(len(start)):
-        known[start[n]] = [n, None]
-    target = start[-1]
-    for r in range(len(start), rounds):
-        n = known[target]
-        if n[1] is None:
-            target = 0
+        known[start[n]] = n
+    for r in range(len(start), rounds - 1):
+        if target in known:
+            last, known[target] = known[target], r
+            target = r - last
         else:
-            target = n[0] - n[1]
-        known[target] = [r, known[target][0] if target in known else None]
+            known[target] = r
+            target = 0
 
     return target
 
