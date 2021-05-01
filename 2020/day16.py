@@ -18,9 +18,9 @@ with open(
             continue
 
         if len(options) == 2 and options[1] != '':
-            fields[options[0]] = []
+            fields[options[0]] = {"ranges": []}
             for r in options[1].strip().split(" or "):
-                fields[options[0]].append(tuple(int(x) for x in r.split("-")))
+                fields[options[0]]["ranges"].append(tuple(int(x) for x in r.split("-")))
         elif options[0] == "your ticket":
             storing = "mine"
         elif options[0] == "nearby tickets":
@@ -40,9 +40,45 @@ def in_ranges(ranges, num):
 
 
 error = 0
-for ticket in nearby:
+for ticket in nearby.copy():
     for num in ticket:
-        if not any(in_ranges(ranges, num) for _, ranges in fields.items()):
+        if not any(in_ranges(d["ranges"], num) for _, d in fields.items()):
+            nearby.remove(ticket)
             error += num
+            break  # can stop processing this ticket
 
 print(error)
+
+gathered = []
+for i in range(len(fields)):
+    gathered.append([x[i] for x in nearby])
+
+for key, d in fields.items():
+    d["targets"] = []
+    for i in range(len(gathered)):
+        if all(in_ranges(d["ranges"], num) for num in gathered[i]):
+            d["targets"].append(i)
+
+# while we have fields with more than 1 target
+cleaned = fields.copy()
+while cleaned:
+    target, d = min(cleaned.items(), key=lambda x: len(x[1]['targets']))
+    for k, v in fields.items():
+        if k != target:
+            try:
+                v['targets'].remove(d['targets'][0])
+                cleaned[k]['targets'] = v['targets']
+            except ValueError:
+                continue
+    del cleaned[target]
+
+value = 1
+for k, v in fields.items():
+    if "departure" in k:
+        print(f"{k} value is {mine[v['targets'][0]]}")
+        value *= mine[v['targets'][0]]
+
+print(value)
+
+
+#print(gathered)
