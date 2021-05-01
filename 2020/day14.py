@@ -10,11 +10,33 @@ with open(
     data = [line.strip() for line in fp]
 
 test = [
-    "mask = XXXXXXXXXXXXXXXXXXXXXXXXXXXXX1XXXX0X",
-    "mem[8] = 11",
-    "mem[7] = 101",
-    "mem[8] = 0",
+    "mask = 000000000000000000000000000000X1001X",
+    "mem[42] = 100",
+    "mask = 00000000000000000000000000000000X0XX",
+    "mem[26] = 1",
 ]
+
+
+def gen_register(register, mask):
+    for mask, negate in flipper(mask):
+        treg = register
+        index = 0
+        while (index := mask.find("1", index)) != -1:
+            treg |= 1 << (len(mask) - index - 1)
+            index += 1
+        treg &= ~(negate)
+        yield treg
+
+
+def flipper(mask, negate=0):
+    if (index := mask.find("X")) != -1:
+        tmask = mask[:index] + "1" + mask[index+1:]
+        yield from flipper(tmask, negate)
+        tmask = mask[:index] + "0" + mask[index+1:]
+        negate |= 1 << (len(mask) - index - 1)
+        yield from flipper(tmask, negate)
+    else:
+        yield mask, negate
 
 
 def process(commands):
@@ -26,21 +48,16 @@ def process(commands):
             mask = arg
 
         elif command[:3] == "mem":
-            register = command[4:-1]
+            register = int(command[4:-1])
             value = int(arg)
-            index = 0
-            while (index := mask.find("1", index)) != -1:
-                value |= 1 << len(mask) - index - 1
-                index = index + 1
-            index = 0
-            while (index := mask.find("0", index)) != -1:
-                value &= ~(1 << len(mask) - index - 1)
-                index = index + 1
+            bits = list(mask)
+            bits.reverse()
 
-            registers[register] = value
+            for r in gen_register(register, mask):
+                registers[r] = value
 
     return(sum(registers.values()))
 
 
-assert(process(test) == 165)
+assert(process(test) == 208)
 print(process(data))
