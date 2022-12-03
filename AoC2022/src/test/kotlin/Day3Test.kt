@@ -8,8 +8,10 @@ class Day3Test {
         val rucksack = Day3.Rucksack("vJrwpWtwJgWrhcsFMMfFFhFp")
         rucksack.topCompartment() shouldBe "vJrwpWtwJgWr"
         rucksack.bottomCompartment() shouldBe "hcsFMMfFFhFp"
-        rucksack.needsMoved() shouldBe "p"
-        Day3.Rucksack.priority(rucksack.needsMoved()[0]) shouldBe 16
+        rucksack.needsMoved().first().also {
+            it shouldBe 'p'
+            Day3.Rucksack.priority(it) shouldBe 16
+        }
     }
 
     @Test
@@ -17,8 +19,10 @@ class Day3Test {
         val rucksack = Day3.Rucksack("jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL")
         rucksack.topCompartment() shouldBe "jqHRNqRjqzjGDLGL"
         rucksack.bottomCompartment() shouldBe "rsFMfFZSrLrFZsSL"
-        rucksack.needsMoved() shouldBe "L"
-        Day3.Rucksack.priority(rucksack.needsMoved()[0]) shouldBe 38
+        rucksack.needsMoved().first().also {
+            it shouldBe 'L'
+            Day3.Rucksack.priority(it) shouldBe 38
+        }
     }
 
     @Test
@@ -26,23 +30,26 @@ class Day3Test {
         val rucksack = Day3.Rucksack("PmmdzqPrVvPwwTWBwg")
         rucksack.topCompartment() shouldBe "PmmdzqPrV"
         rucksack.bottomCompartment() shouldBe "vPwwTWBwg"
-        rucksack.needsMoved() shouldBe "P"
-        Day3.Rucksack.priority(rucksack.needsMoved()[0]) shouldBe 42
+        rucksack.needsMoved().first().also {
+            it shouldBe 'P'
+            Day3.Rucksack.priority(it) shouldBe 42
+        }
+
     }
 
     @Test
     fun `final rucksacks`() {
-        Day3.Rucksack("wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn").needsMoved().also {
-            it shouldBe "v"
-            Day3.Rucksack.priority(it[0]) shouldBe 22
+        Day3.Rucksack("wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn").needsMoved().first().also {
+            it shouldBe 'v'
+            Day3.Rucksack.priority(it) shouldBe 22
         }
-        Day3.Rucksack("ttgJtRGJQctTZtZT").needsMoved().also {
-            it shouldBe "t"
-            Day3.Rucksack.priority(it[0]) shouldBe 20
+        Day3.Rucksack("ttgJtRGJQctTZtZT").needsMoved().first().also {
+            it shouldBe 't'
+            Day3.Rucksack.priority(it) shouldBe 20
         }
-        Day3.Rucksack("CrZsJsPPZsGzwwsLwLmpwMDw").needsMoved().also {
-            it shouldBe "s"
-            Day3.Rucksack.priority(it[0]) shouldBe 19
+        Day3.Rucksack("CrZsJsPPZsGzwwsLwLmpwMDw").needsMoved().first().also {
+            it shouldBe 's'
+            Day3.Rucksack.priority(it) shouldBe 19
         }
     }
 
@@ -59,7 +66,7 @@ class Day3Test {
             PmmdzqPrVvPwwTWBwg
         """.trimIndent()
 
-        Day3(firstSet).findBadges() shouldBe listOf("r")
+        Day3(firstSet).findBadges() shouldBe listOf(listOf('r'))
 
         val secondSet = """
             wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
@@ -67,10 +74,10 @@ class Day3Test {
             CrZsJsPPZsGzwwsLwLmpwMDw
         """.trimIndent()
 
-        Day3(secondSet).findBadges() shouldBe listOf("Z")
+        Day3(secondSet).findBadges() shouldBe listOf(listOf('Z'))
 
         Day3(listOf(firstSet, secondSet).joinToString("\n")).findBadges().also {
-            it shouldBe listOf("r", "Z")
+            it shouldBe listOf(listOf('r'), listOf('Z'))
             it.sumOf { s -> s.sumOf { c -> Day3.Rucksack.priority(c) } } shouldBe 70
         }
 
