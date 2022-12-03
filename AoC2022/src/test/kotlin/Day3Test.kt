@@ -1,8 +1,7 @@
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
-import java.io.File
 
-class Day3Test {
+class Day3Test: BaseDayTest(3) {
     @Test
     fun `first rucksack`() {
         val rucksack = Day3.Rucksack("vJrwpWtwJgWrhcsFMMfFFhFp")
@@ -55,7 +54,7 @@ class Day3Test {
 
     @Test
     fun `total priorities`() {
-        Day3(File("src/test/resources/Day3/input.txt").readText()).rucksackPriorities() shouldBe 157
+        Day3(input).rucksackPriorities() shouldBe 157
     }
 
     @Test

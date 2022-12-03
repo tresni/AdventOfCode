@@ -3,11 +3,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import java.io.File
 import java.util.stream.Stream
 
-class Day2Test {
-
+class Day2Test: BaseDayTest(2) {
     @Test
     fun `basic tests`() {
         Day2("A Y").score() shouldBe 8
@@ -17,7 +15,6 @@ class Day2Test {
 
     @Test
     fun `should end with a score of 15`() {
-        val input = File("src/test/resources/Day2/input.txt").readText()
         Day2(input).score() shouldBe 15
     }
 
@@ -38,7 +35,6 @@ class Day2Test {
 
     @Test
     fun `extended rigged`() {
-        val input = File("src/test/resources/Day2/input.txt").readText()
         Day2(input).rig() shouldBe 12
     }
 

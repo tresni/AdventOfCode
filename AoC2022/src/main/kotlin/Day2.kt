@@ -1,5 +1,3 @@
-import java.io.File
-
 class Day2(val input: String) {
     fun score(): Int {
         return input.uppercase().split("\n")
@@ -63,7 +61,7 @@ class Day2(val input: String) {
 }
 
 fun main() {
-    val input = File("src/main/resources/Day2/input.txt").readText()
+    val input = Utils.readInput(2)
 
     println(Day2(input).score())
     println(Day2(input).rig())

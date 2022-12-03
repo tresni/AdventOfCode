@@ -1,5 +1,3 @@
-import java.io.File
-
 class Day1 {
     private fun getElvesCalories(supplies: String?) = supplies?.let { elves ->
         elves.split("\n\n").map { it.split("\n").map { v -> v.toInt() } }
@@ -12,7 +10,7 @@ class Day1 {
 }
 
 fun main() {
-    val input = File("src/main/resources/Day1/input.txt").readText()
+    val input = Utils.readInput(1)
     println(Day1().mostCalories(input))
     println(Day1().topCalories(input))
 }
