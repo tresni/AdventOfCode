@@ -48,6 +48,31 @@ class Day3Test {
 
     @Test
     fun `total priorities`() {
-        Day3(File("src/test/resources/Day3/input.txt").readText()).priorities() shouldBe 157
+        Day3(File("src/test/resources/Day3/input.txt").readText()).rucksackPriorities() shouldBe 157
+    }
+
+    @Test
+    fun `badge priorities`() {
+        val firstSet = """
+            vJrwpWtwJgWrhcsFMMfFFhFp
+            jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
+            PmmdzqPrVvPwwTWBwg
+        """.trimIndent()
+
+        Day3(firstSet).findBadges() shouldBe listOf("r")
+
+        val secondSet = """
+            wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
+            ttgJtRGJQctTZtZT
+            CrZsJsPPZsGzwwsLwLmpwMDw
+        """.trimIndent()
+
+        Day3(secondSet).findBadges() shouldBe listOf("Z")
+
+        Day3(listOf(firstSet, secondSet).joinToString("\n")).findBadges().also {
+            it shouldBe listOf("r", "Z")
+            it.sumOf { s -> s.sumOf { c -> Day3.Rucksack.priority(c) } } shouldBe 70
+        }
+
     }
 }

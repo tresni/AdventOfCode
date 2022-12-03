@@ -1,7 +1,12 @@
 import java.io.File
 
 class Day3(val input: String) {
-    fun priorities() = input.split("\n").sumOf { Rucksack(it).needsMoved().sumOf { c -> Rucksack.priority(c)}}
+    fun rucksackPriorities() = input.split("\n").sumOf { Rucksack(it).needsMoved().sumOf { c -> Rucksack.priority(c)}}
+    fun findBadges() = input.split("\n").chunked(3).map {
+        it.reduce { acc, itt ->
+            acc.toSet().intersect(itt.toSet()).joinToString("")
+        }
+    }
 
     class Rucksack(private val inventory: String) {
         fun topCompartment() = inventory.substring(0, inventory.length / 2 )
@@ -20,5 +25,7 @@ class Day3(val input: String) {
 }
 
 fun main() {
-    println(Day3(File("src/main/resources/Day3/input.txt").readText()).priorities())
+    val input = File("src/main/resources/Day3/input.txt").readText()
+    println(Day3(input).rucksackPriorities())
+    println(Day3(input).findBadges().sumOf { s -> s.sumOf { c -> Day3.Rucksack.priority(c) }})
 }
