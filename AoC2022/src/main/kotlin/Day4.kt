@@ -1,6 +1,10 @@
 class Day4(val input: String) {
-    fun countOverlaps() = input.split("\n").count {
+    fun countFullOverlaps() = input.split("\n").count {
         Assignments(it).let { a -> a.overlap() == a.minSet() }
+    }
+
+    fun countOverlaps() = input.split("\n").count {
+        Assignments(it).overlap().isNotEmpty()
     }
 
     class Assignments(val input: String) {
@@ -19,5 +23,6 @@ class Day4(val input: String) {
 
 fun main() {
     val input = Utils.readInput(4)
+    println(Day4(input).countFullOverlaps())
     println(Day4(input).countOverlaps())
 }

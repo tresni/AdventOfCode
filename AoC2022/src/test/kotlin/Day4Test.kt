@@ -9,7 +9,7 @@ class Day4Test: BaseDayTest(4) {
         Day4.Assignments("5-7,7-9").overlap() shouldBe setOf(7)
         Day4.Assignments("2-8,3-7").overlap() shouldBe setOf(3,4,5,6,7)
         Day4.Assignments("6-6,4-6").overlap() shouldBe setOf(6)
-        Day4.Assignments("2-6,4-8").overlap() shouldBe setOf (4,5,6)
+        Day4.Assignments("2-6,4-8").overlap() shouldBe setOf(4,5,6)
     }
 
     @Test
@@ -23,8 +23,13 @@ class Day4Test: BaseDayTest(4) {
     }
 
     @Test
-    fun `check test input`() {
-        Day4(input).countOverlaps() shouldBe 2
+    fun `check part 1 with test input`() {
+        Day4(input).countFullOverlaps() shouldBe 2
+    }
+
+    @Test
+    fun `check part 2 with test input`() {
+        Day4(input).countOverlaps() shouldBe 4
     }
 
 }
