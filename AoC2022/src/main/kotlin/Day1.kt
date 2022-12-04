@@ -10,7 +10,7 @@ class Day1 {
 }
 
 fun main() {
-    val input = Utils.readInput(1)
+    val input = readInput(1)
     println(Day1().mostCalories(input))
     println(Day1().topCalories(input))
 }

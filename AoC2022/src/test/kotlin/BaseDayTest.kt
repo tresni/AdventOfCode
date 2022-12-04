@@ -1,3 +1,3 @@
 open class BaseDayTest(day: Int) {
-    protected val input = Utils.readInput(day, "test")
+    protected val input = readInput(day, "test")
 }

@@ -22,7 +22,7 @@ class Day4(val input: String) {
 }
 
 fun main() {
-    val input = Utils.readInput(4)
+    val input = readInput(4)
     println(Day4(input).countFullOverlaps())
     println(Day4(input).countOverlaps())
 }
