@@ -9,13 +9,20 @@ class Day5(input: String) {
         instructions = details.split("\n")
     }
 
-    fun runInstructions(): String {
+    fun runInstructions(advanced: Boolean = false): String {
         instructions.forEach {
             "move (\\d+) from (\\d+) to (\\d+)".toRegex().find(it)?.let { match ->
                 val count = match.groupValues[1].toInt()
                 val source = match.groupValues[2].toInt() - 1
 
-                this.crates[match.groupValues[3].toInt() - 1].addAll(this.crates[source].takeLast(count).reversed())
+                this.crates[match.groupValues[3].toInt() - 1].addAll(this.crates[source].takeLast(count).reversed().run {
+                    if (advanced) {
+                        this.reversed()
+                    }
+                    else {
+                        this
+                    }
+                })
                 repeat(count) { this.crates[source].removeAt(this.crates[source].size - 1) }
             }
         }
@@ -40,4 +47,5 @@ class Day5(input: String) {
 fun main() {
     val input = readInput(5)
     println(Day5(input).runInstructions())
+    println(Day5(input).runInstructions(advanced = true))
 }

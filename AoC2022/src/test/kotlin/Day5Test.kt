@@ -23,4 +23,9 @@ class Day5Test: BaseDayTest(5) {
     fun `follows instructions`() {
         Day5(input).runInstructions() shouldBe "CMZ"
     }
+
+    @Test
+    fun `follows advanced instructions`() {
+        Day5(input).runInstructions(advanced = true) shouldBe "MCD"
+    }
 }
