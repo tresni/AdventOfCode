@@ -2,18 +2,21 @@ import os
 
 def solver(problem: str) -> int:
     stack = problem.split(" ")
+    print(stack)
+    try:
+        # Addition first, but only if it exists
+        while True:
+            start = stack.index("+")
+            stack = stack[:start - 1] + [int(stack[start - 1]) + int(stack[start + 1])] + stack[start + 2:]
+    except ValueError:
+        pass
+
+    print(stack)
+
     result = int(stack[0])
     for i in range(1, len(stack), 2):
-        oper = stack[i]
         rValue = int(stack[i+1])
-        print(f"{result} {oper} {rValue}")
-
-        if oper == "+":
-            result += rValue
-        elif oper == "*":
-            result *= rValue
-        else:
-            raise ValueError("What the shit?!")
+        result *= rValue
 
     print(result)
     return result
@@ -28,12 +31,12 @@ def math(problem: str) -> int:
     return solver(problem)
     
 
-assert math("1 + 2 * 3 + 4 * 5 + 6") == 71
+assert math("1 + 2 * 3 + 4 * 5 + 6") == 231
 assert math("1 + (2 * 3) + (4 * (5 + 6))") == 51
-assert math("2 * 3 + (4 * 5)") == 26
-assert math("5 + (8 * 3 + 9 + 3 * 4 * 3)") == 437
-assert math("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 12240
-assert math("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 13632
+assert math("2 * 3 + (4 * 5)") == 46
+assert math("5 + (8 * 3 + 9 + 3 * 4 * 3)") == 1445
+assert math("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 669060
+assert math("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 23340
 
 with open(
     os.path.join(
