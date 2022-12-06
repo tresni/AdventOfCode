@@ -1,5 +1,5 @@
 import os
-import re
+import regex as re
 
 class RulesParser(object):
     _rules: dict[int, str]
@@ -18,16 +18,30 @@ class RulesParser(object):
         self._regex = re.compile(f"^{self._parsed[0]}$")
 
     def create(self, rule: list[str]) -> str:
-        parsed = "(?:"
+        parsed = ""
+        wrap = False
         for x in rule:
             if x.isnumeric():
                 x = int(x)
                 if x not in self._parsed:
-                    self._parsed[x] = self.create(self._rules[x])
+                    if x == 8:
+                        self._parsed[8] = f"(?:{self.create(self._rules[42])})+"
+                    elif x == 11:
+                        # Set the rule once ...
+                        parsed += f"(?<rule11>{self.create(self._rules[42])}(?&rule11)?{self.create(self._rules[31])})" 
+                        # reference it in the future
+                        self._parsed[11] = "(?&rule11)"
+                        continue
+                    else:
+                        self._parsed[x] = self.create(self._rules[x])
                 parsed += self._parsed[x]
+            elif x == "|":
+                wrap = True
+                parsed += "|"
             else:
                 parsed += x.strip("\"")
-        parsed += ")"
+        if wrap:
+            parsed = f"(?:{parsed})"
         return parsed
                 
     def regex(self) -> str:
@@ -43,7 +57,7 @@ rp = RulesParser("""
 3: "b"
 """.strip())
 
-assert rp.regex() == r"(?:(?:a)(?:(?:a)(?:b)|(?:b)(?:a)))"
+assert rp.regex() == r"a(?:ab|ba)"
 
 assert rp.match("aab")
 assert rp.match("aba")
