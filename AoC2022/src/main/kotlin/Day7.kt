@@ -7,6 +7,13 @@ class Day7(val input: String) {
         val sub = mutableMapOf<String, Directory>()
         val files = mutableMapOf<String, Int>()
 
+        fun cd(name: String): Directory {
+            if (name !in sub) {
+                sub[name] = Directory(this)
+            }
+            return sub[name]!!
+        }
+
         fun size(): Int {
             if (size == null) {
                 size = files.values.sum() + sub.map { it.value.size() }.sum()
@@ -45,19 +52,12 @@ class Day7(val input: String) {
                         currentDirectory = when (tokens[2]) {
                             ".." -> currentDirectory.parent!!
                             "/" -> rootDirectory
-                            else -> {
-                                if (tokens[2] !in currentDirectory.sub) {
-                                    currentDirectory.sub[tokens[2]] = Directory(currentDirectory)
-                                }
-                                currentDirectory.sub[tokens[2]]!!
-                            }
+                            else -> currentDirectory.cd(tokens[2])
                         }
                     }
                 }
-                "dir" -> currentDirectory.sub[tokens[1]] = Directory(currentDirectory)
-                else -> {
-                    currentDirectory.files[tokens[1]] = tokens[0].toInt()
-                }
+                "dir" -> currentDirectory.cd(tokens[2])
+                else -> currentDirectory.files[tokens[1]] = tokens[0].toInt()
             }
         }
     }
@@ -65,7 +65,7 @@ class Day7(val input: String) {
     fun findCandidateDirectory(): Int {
         val free = AVAILABLE - rootDirectory.size()
         val need = NEED_SIZE - free
-        return rootDirectory.minDirectorySize(need).minByOrNull { it.size() }!!.size()
+        return rootDirectory.minDirectorySize(need).minOf { it.size() }
     }
 
     companion object {
