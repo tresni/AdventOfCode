@@ -4,9 +4,11 @@ import org.junit.jupiter.api.Test
 class Day8Test : BaseDayTest(8) {
     @Test
     fun test() {
-        Day8("222\n212\n222").isVisible(1,1) shouldBe false
-        Day8("222\n212\n222").isVisible(0, 0) shouldBe true
-        Day8("222\n212\n222").isVisible(2,2) shouldBe true
+        Day8("222\n212\n222").also {
+            it.isVisible(1,1) shouldBe false
+            it.isVisible(0, 0) shouldBe true
+            it.isVisible(2,2) shouldBe true
+        }
     }
 
     @Test
