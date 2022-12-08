@@ -5,7 +5,7 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
-class Day2Test: BaseDayTest(2) {
+class Day2Test : BaseDayTest(2) {
     @Test
     fun `basic tests`() {
         Day2("A Y").score() shouldBe 8

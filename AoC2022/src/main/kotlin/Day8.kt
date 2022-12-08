@@ -8,12 +8,12 @@ class Day8(input: String) {
     }
 
     fun isVisible(x: Int, y: Int): Boolean {
-        if ( y == 0 || y == trees.count() -1 || x == 0 || x == trees[y].count() - 1) return true
+        if (y == 0 || y == trees.count() - 1 || x == 0 || x == trees[y].count() - 1) return true
         return trees[y].splitsExceedValueAtIndex(x) || trees.map { it[x] }.splitsExceedValueAtIndex(y)
     }
 
     fun scenicScore(x: Int, y: Int): Int {
-        if ( y == 0 || y == trees.count() -1 || x == 0 || x == trees[y].count() - 1) return 0
+        if (y == 0 || y == trees.count() - 1 || x == 0 || x == trees[y].count() - 1) return 0
         val target = trees[y][x]
         return trees[y].splitAndTarget(x, target) * trees.map { it[x] }.splitAndTarget(y, target)
     }
@@ -32,6 +32,7 @@ class Day8(input: String) {
             this.split(index).let { (left, right) ->
                 left.reversed().filterToTarget(target) * right.filterToTarget(target)
             }
+
         private fun List<Int>.filterToTarget(target: Int): Int =
             if (this.isNotEmpty()) {
                 this.takeWhile { it < target }.count().let {

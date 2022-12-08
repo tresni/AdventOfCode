@@ -1,7 +1,7 @@
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
-class Day3Test: BaseDayTest(3) {
+class Day3Test : BaseDayTest(3) {
     @Test
     fun `first rucksack`() {
         val rucksack = Day3.Rucksack("vJrwpWtwJgWrhcsFMMfFFhFp")
@@ -33,7 +33,6 @@ class Day3Test: BaseDayTest(3) {
             it shouldBe 'P'
             Day3.Rucksack.priority(it) shouldBe 42
         }
-
     }
 
     @Test
@@ -79,6 +78,5 @@ class Day3Test: BaseDayTest(3) {
             it shouldBe listOf(listOf('r'), listOf('Z'))
             it.sumOf { s -> s.sumOf { c -> Day3.Rucksack.priority(c) } } shouldBe 70
         }
-
     }
 }

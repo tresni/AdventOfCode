@@ -15,19 +15,20 @@ class Day5(input: String) {
                 val count = match.groupValues[1].toInt()
                 val source = match.groupValues[2].toInt() - 1
 
-                this.crates[match.groupValues[3].toInt() - 1].addAll(this.crates[source].takeLast(count).reversed().run {
-                    if (advanced) {
-                        this.reversed()
-                    }
-                    else {
-                        this
-                    }
-                })
+                this.crates[match.groupValues[3].toInt() - 1].addAll(
+                    this.crates[source].takeLast(count).reversed().run {
+                        if (advanced) {
+                            this.reversed()
+                        } else {
+                            this
+                        }
+                    })
                 repeat(count) { this.crates[source].removeAt(this.crates[source].size - 1) }
             }
         }
         return crates.joinToString("") { it.last() }
     }
+
     companion object {
         internal fun Crates(input: String): List<MutableList<String>> {
             val crates = mutableMapOf<Int, MutableList<String>>()
