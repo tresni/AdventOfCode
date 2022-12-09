@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day7(val input: String) {
 
@@ -81,7 +81,7 @@ class Day7(val input: String) {
 }
 
 fun main() {
-    val filesystem = Day7(readInput(7))
+    val filesystem = Day7(InputReader.inputAsString(2022, 7))
     println(filesystem.rootDirectory.smallDirectoriesSize())
     println(filesystem.findCandidateDirectory())
 }

@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day1 {
     private fun getElvesCalories(supplies: String?) = supplies?.let { elves ->
@@ -14,7 +14,7 @@ class Day1 {
 }
 
 fun main() {
-    val input = readInput(1)
+    val input = InputReader.inputAsString(2022, 1)
     println(Day1().mostCalories(input))
     println(Day1().topCalories(input))
 }

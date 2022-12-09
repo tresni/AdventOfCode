@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day6 {
     companion object {
@@ -22,7 +22,7 @@ class Day6 {
 }
 
 fun main() {
-    val input = readInput(6)
+    val input = InputReader.inputAsString(2022, 6)
     println(Day6.startOfInput(input))
     println(Day6.startOfInput(input, 14))
 }

@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day3(val input: String) {
     fun rucksackPriorities() = input.split("\n").sumOf { Rucksack(it).needsMoved().sumOf { c -> Rucksack.priority(c) } }
@@ -25,7 +25,7 @@ class Day3(val input: String) {
 }
 
 fun main() {
-    val input = readInput(3)
+    val input = InputReader.inputAsString(2022, 3)
     println(Day3(input).rucksackPriorities())
     println(Day3(input).findBadges().sumOf { s -> s.sumOf { c -> Day3.Rucksack.priority(c) } })
 }

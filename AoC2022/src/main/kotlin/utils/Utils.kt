@@ -41,10 +41,3 @@ object InputReader {
 
 fun <T> List<List<T>>.transpose(): List<List<T>> =
     this[0].indices.map { j -> this.indices.reversed().map { i -> this[i][j] } }
-
-@Deprecated(
-    "use InputReader.inputAsString instead",
-    ReplaceWith("InputReader.inputAsString(, day)", "utils.InputReader")
-)
-fun readInput(day: Int) =
-    InputReader.inputAsString(2022, day)

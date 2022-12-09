@@ -1,16 +1,12 @@
 package aoc2022
 
 import utils.BaseDay
+import utils.InputReader
 import utils.Point
-import utils.asString
-import utils.readInput
 
 class Day09(val input: String) : BaseDay<Int, Int>() {
-    private val hasTouched = mutableMapOf(Point.ORIGIN to true)
-
-    fun print() = hasTouched.asString()
-
     private fun followTheLeader(input: String, followers: Int = 1): Int {
+        val hasTouched = mutableMapOf(Point.ORIGIN to true)
         var headCoords = Point.ORIGIN
         val followerCoords = MutableList(followers) { Point.ORIGIN }
 
@@ -45,6 +41,8 @@ class Day09(val input: String) : BaseDay<Int, Int>() {
 }
 
 fun main() {
-    println(Day09(readInput(9)).solve1())
-    println(Day09(readInput(9)).solve2())
+    Day09(InputReader.inputAsString(2022, 9)).also {
+        println(it.solve1())
+        println(it.solve2())
+    }
 }

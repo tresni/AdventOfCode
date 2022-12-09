@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day8(input: String) {
     private val trees: MutableList<List<Int>> = mutableListOf()
@@ -47,6 +47,8 @@ class Day8(input: String) {
 }
 
 fun main() {
-    println(Day8(readInput(8)).countVisible())
-    println(Day8(readInput(8)).mostScenic())
+    Day8(InputReader.inputAsString(2022, 8)).also {
+        println(it.countVisible())
+        println(it.mostScenic())
+    }
 }

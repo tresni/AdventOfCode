@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day5(input: String) {
 
@@ -50,7 +50,7 @@ class Day5(input: String) {
 }
 
 fun main() {
-    val input = readInput(5)
+    val input = InputReader.inputAsString(2022, 5)
     println(Day5(input).runInstructions())
     println(Day5(input).runInstructions(advanced = true))
 }

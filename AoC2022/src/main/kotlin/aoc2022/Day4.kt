@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day4(val input: String) {
     fun countFullOverlaps() = input.split("\n").count {
@@ -26,7 +26,7 @@ class Day4(val input: String) {
 }
 
 fun main() {
-    val input = readInput(4)
+    val input = InputReader.inputAsString(2022, 4)
     println(Day4(input).countFullOverlaps())
     println(Day4(input).countOverlaps())
 }

@@ -1,6 +1,6 @@
 package aoc2022
 
-import utils.readInput
+import utils.InputReader
 
 class Day2(val input: String) {
     fun score(): Int {
@@ -65,7 +65,7 @@ class Day2(val input: String) {
 }
 
 fun main() {
-    val input = readInput(2)
+    val input = InputReader.inputAsString(2022, 2)
 
     println(Day2(input).score())
     println(Day2(input).rig())
