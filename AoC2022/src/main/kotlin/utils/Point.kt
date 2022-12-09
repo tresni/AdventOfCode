@@ -1,8 +1,7 @@
 package utils
 
 import kotlin.math.absoluteValue
-import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.sign
 
 data class Point(
     val x: Int,
@@ -84,9 +83,7 @@ data class Point(
         return sequence {
             var curr = this@Point
             while (curr != other) {
-                val dX = min(max(other.x - x, -1), 1)
-                val dY = min(max(other.y - y, -1), 1)
-                curr += Point(dX, dY)
+                curr += Point((other.x - x).sign, (other.y - y).sign)
                 yield(curr)
             }
         }
