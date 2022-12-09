@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 
-class Day7Test : BaseDayTest(7) {
+class Day7Test : BaseDayTest(2022, 7) {
     @Test
     fun `sample returns a and e`() {
         val sample = Day7(input)

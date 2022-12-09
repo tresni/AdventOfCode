@@ -1,5 +1,5 @@
 package utils
 
-open class BaseDayTest(day: Int) {
-    protected val input = readInput(day)
+open class BaseDayTest(year: Int, day: Int) {
+    protected val input = InputReader.inputAsString(year, day)
 }

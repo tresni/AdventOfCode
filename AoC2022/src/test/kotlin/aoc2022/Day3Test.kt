@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 
-class Day3Test : BaseDayTest(3) {
+class Day3Test : BaseDayTest(2022, 3) {
     @Test
     fun `first rucksack`() {
         val rucksack = Day3.Rucksack("vJrwpWtwJgWrhcsFMMfFFhFp")

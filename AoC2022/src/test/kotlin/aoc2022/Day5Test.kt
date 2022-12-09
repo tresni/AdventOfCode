@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 
-class Day5Test : BaseDayTest(5) {
+class Day5Test : BaseDayTest(2022, 5) {
     @Test
     fun `read initial crates properly`() {
         Day5.Crates(

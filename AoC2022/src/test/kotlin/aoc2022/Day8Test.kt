@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 
-class Day8Test : BaseDayTest(8) {
+class Day8Test : BaseDayTest(2022, 8) {
     @Test
     fun test() {
         Day8("222\n212\n222").also {

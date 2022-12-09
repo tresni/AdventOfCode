@@ -21,10 +21,10 @@ data class Point(
 
     fun moveBy(direction: Direction, amount: Int) = this + direction.point * amount
 
-    @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo"))
+    @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo(x, y)"))
     fun distanceTo(x: Int, y: Int) = manhattanDistanceTo(x, y)
 
-    @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo"))
+    @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo(other)"))
     infix fun distanceTo(other: Point) = manhattanDistanceTo(other)
 
     fun manhattanDistanceTo(x: Int, y: Int): Int = abs(x - this.x) + abs(y - this.y)

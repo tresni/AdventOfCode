@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 
-class Day4Test : BaseDayTest(4) {
+class Day4Test : BaseDayTest(2022, 4) {
     @Test
     fun `finding overlaps`() {
         Day4.Assignments("2-4,6-8").overlap() shouldBe emptySet()

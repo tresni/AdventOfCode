@@ -4,7 +4,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 
-class Day6Test : BaseDayTest(5) {
+class Day6Test : BaseDayTest(2022, 5) {
 
     @Test
     fun `initial tests`() {
