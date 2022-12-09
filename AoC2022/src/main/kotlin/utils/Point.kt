@@ -1,7 +1,6 @@
 package utils
 
-import kotlin.math.absoluteValue
-import kotlin.math.sign
+import kotlin.math.*
 
 data class Point(
     val x: Int,
@@ -19,13 +18,20 @@ data class Point(
 
     fun moveBy(direction: Direction, amount: Int) = this + direction.point * amount
 
-    fun distanceTo(x: Int, y: Int): Int {
-        val dx = (x - this.x).absoluteValue
-        val dy = (y - this.y).absoluteValue
-        return dx + dy
-    }
+    @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo"))
+    fun distanceTo(x: Int, y: Int) = manhattanDistanceTo(x, y)
+    
+    @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo"))
+    infix fun distanceTo(other: Point) = manhattanDistanceTo(other)
 
-    infix fun distanceTo(other: Point) = distanceTo(other.x, other.y)
+    fun manhattanDistanceTo(x: Int, y: Int): Int = abs(x - this.x) + abs(y - this.y)
+
+    infix fun manhattanDistanceTo(other: Point) = manhattanDistanceTo(other.x, other.y)
+
+    fun straightDistanceTo(x: Int, y: Int) =
+        sqrt((x - this.x).toDouble().pow(2) + (y - this.y).toDouble().pow(2))
+
+    infix fun straightDistanceTo(other: Point) = straightDistanceTo(other.x, other.y)
 
     fun up() = move(Direction.North)
 
@@ -88,6 +94,10 @@ data class Point(
             }
         }
     }
+
+    companion object {
+        val ORIGIN = Point(0, 0)
+    }
 }
 
 fun <T> Map<Point, T>.asString(
@@ -95,9 +105,13 @@ fun <T> Map<Point, T>.asString(
     transform: (T?) -> CharSequence
 ): String = asString(prefix) { x, y -> transform(get(Point(x, y))) }
 
+fun Map<Point, Boolean>.asString(
+    prefix: String = "\n",
+): String = asString(prefix) { x, y -> if (get(Point(x, y)) == true) "█" else " " }
+
 fun <T> Map<Point, T>.asString(
     prefix: String = "\n",
-    producer: (x: Int, y: Int) -> CharSequence
+    producer: (x: Int, y: Int) -> CharSequence = { x, y -> get(Point(x, y))?.toString() ?: " " }
 ): String {
     val minX = keys.minOf { it.x }
     val maxX = keys.maxOf { it.x }

@@ -2,49 +2,17 @@ package aoc2022
 
 import utils.BaseDay
 import utils.Point
+import utils.asString
 import utils.readInput
 
 class Day09(val input: String) : BaseDay<Int, Int>() {
-    override fun solve1(): Int {
-        val hasTouched = mutableMapOf(Point(0, 0) to true)
-        var headCoords = Point(0, 0)
-        var tailCoords = Point(0, 0)
+    private val hasTouched = mutableMapOf(Point.ORIGIN to true)
 
-        input.lines().forEach {
-            val (command, r) = it.split(" ")
-            repeat(r.toInt()) {
-                headCoords = when (command) {
-                    "U" -> headCoords.up()
-                    "D" -> headCoords.down()
-                    "L" -> headCoords.left()
-                    "R" -> headCoords.right()
-                    else -> return@forEach
-                }
+    fun print() = hasTouched.asString()
 
-                if (!tailCoords.neighboursWithItself.contains(headCoords)) {
-                    tailCoords = tailCoords.walkTo(headCoords).first().also { p -> hasTouched[p] = true }
-                }
-            }
-        }
-
-        return hasTouched.size
-
-    }
-
-    override fun solve2(): Int {
-        val hasTouched = mutableMapOf(Point(0, 0) to true)
-        var headCoords = Point(0, 0)
-        val pieces = mutableListOf(
-            Point(0, 0),
-            Point(0, 0),
-            Point(0, 0),
-            Point(0, 0),
-            Point(0, 0),
-            Point(0, 0),
-            Point(0, 0),
-            Point(0, 0),
-            Point(0, 0),
-        )
+    private fun followTheLeader(input: String, followers: Int = 1): Int {
+        var headCoords = Point.ORIGIN
+        val followerCoords = MutableList(followers) { Point.ORIGIN }
 
         input.lines().forEach {
             val (command, r) = it.split(" ")
@@ -58,18 +26,22 @@ class Day09(val input: String) : BaseDay<Int, Int>() {
                 }
 
                 var follow = headCoords
-                pieces.forEachIndexed { n, p ->
-                    if (!p.neighboursWithItself.contains(follow)) {
-                        pieces[n] = p.walkTo(follow).first()
+                followerCoords.forEachIndexed { n, p ->
+                    if (follow !in p.neighboursWithItself) {
+                        followerCoords[n] = p.walkTo(follow).first()
                     }
-                    follow = pieces[n]
+                    follow = followerCoords[n]
                 }
 
-                hasTouched[pieces.last()] = true
+                hasTouched[followerCoords.last()] = true
             }
         }
         return hasTouched.size
     }
+
+    override fun solve1(): Int = followTheLeader(input)
+
+    override fun solve2(): Int = followTheLeader(input, 9)
 }
 
 fun main() {
