@@ -61,7 +61,7 @@ class Day7(val input: String) {
                     }
                 }
 
-                "dir" -> currentDirectory.cd(tokens[2])
+                "dir" -> currentDirectory.cd(tokens[1])
                 else -> currentDirectory.files[tokens[1]] = tokens[0].toInt()
             }
         }

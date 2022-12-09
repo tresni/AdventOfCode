@@ -1,6 +1,9 @@
 package utils
 
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sign
+import kotlin.math.sqrt
 
 data class Point(
     val x: Int,
@@ -20,7 +23,7 @@ data class Point(
 
     @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo"))
     fun distanceTo(x: Int, y: Int) = manhattanDistanceTo(x, y)
-    
+
     @Deprecated("Use manhattanDistanceTo", ReplaceWith("manhattanDistanceTo"))
     infix fun distanceTo(other: Point) = manhattanDistanceTo(other)
 
@@ -69,7 +72,7 @@ data class Point(
     fun slope(other: Point): Point {
         val dX = other.x - x
         val dY = other.y - y
-        val gcd = gcd(dX.absoluteValue, dY.absoluteValue)
+        val gcd = gcd(abs(dX), abs(dY))
         return Point(dX / gcd, dY / gcd)
     }
 

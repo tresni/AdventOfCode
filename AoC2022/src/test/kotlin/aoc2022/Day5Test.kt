@@ -1,4 +1,5 @@
-import aoc2022.Day5
+package aoc2022
+
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest

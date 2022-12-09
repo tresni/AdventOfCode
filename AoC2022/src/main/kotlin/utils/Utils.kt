@@ -4,7 +4,6 @@ import java.io.File
 import java.lang.System.lineSeparator
 
 object InputReader {
-
     fun inputAsString(day: Int, year: Int, suffix: String = ""): String {
         return fromResources(day, year, suffix).readText()
     }
