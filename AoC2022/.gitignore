@@ -1,6 +1,3 @@
-# No showing people my special data!
-src/main/resources/**/input.txt
-
 # Created by https://www.toptal.com/developers/gitignore/api/intellij,gradle
 # Edit at https://www.toptal.com/developers/gitignore?templates=intellij,gradle
 

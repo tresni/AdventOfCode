@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day1 {
     private fun getElvesCalories(supplies: String?) = supplies?.let { elves ->
         elves.split("\n\n").map { it.split("\n").map { v -> v.toInt() } }

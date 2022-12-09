@@ -1,5 +1,7 @@
+import aoc2022.Day8
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import utils.BaseDayTest
 
 class Day8Test : BaseDayTest(8) {
     @Test

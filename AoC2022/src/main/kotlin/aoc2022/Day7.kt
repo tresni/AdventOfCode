@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day7(val input: String) {
 
     class Directory(

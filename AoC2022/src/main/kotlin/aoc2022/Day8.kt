@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day8(input: String) {
     private val trees: MutableList<List<Int>> = mutableListOf()
 

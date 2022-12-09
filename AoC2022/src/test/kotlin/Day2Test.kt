@@ -1,8 +1,10 @@
+import aoc2022.Day2
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import utils.BaseDayTest
 import java.util.stream.Stream
 
 class Day2Test : BaseDayTest(2) {

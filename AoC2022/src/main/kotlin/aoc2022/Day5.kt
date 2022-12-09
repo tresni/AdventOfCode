@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day5(input: String) {
 
     internal val crates: List<MutableList<String>>

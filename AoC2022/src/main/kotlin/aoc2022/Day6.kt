@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day6 {
     companion object {
         fun startOfInput(message: String, size: Int = 4): Int {

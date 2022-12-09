@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day4(val input: String) {
     fun countFullOverlaps() = input.split("\n").count {
         Assignments(it).let { a -> a.overlap() == a.minSet() }

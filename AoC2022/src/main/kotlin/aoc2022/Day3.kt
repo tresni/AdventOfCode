@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day3(val input: String) {
     fun rucksackPriorities() = input.split("\n").sumOf { Rucksack(it).needsMoved().sumOf { c -> Rucksack.priority(c) } }
     fun findBadges() = input.split("\n").chunked(3).map {

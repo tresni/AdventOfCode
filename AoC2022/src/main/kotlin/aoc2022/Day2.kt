@@ -1,3 +1,7 @@
+package aoc2022
+
+import utils.readInput
+
 class Day2(val input: String) {
     fun score(): Int {
         return input.uppercase().split("\n")
