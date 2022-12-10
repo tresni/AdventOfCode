@@ -3,6 +3,7 @@ package aoc2022
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
+import utils.easyReading
 
 class Day10Test : BaseDayTest(2022, 10) {
 
@@ -34,7 +35,6 @@ class Day10Test : BaseDayTest(2022, 10) {
             #####.....#####.....#####.....#####.....
             ######......######......######......####
             #######.......#######.......#######.....
-            
-        """.trimIndent()
+        """.trimIndent().easyReading()
     }
 }

@@ -2,6 +2,8 @@ package aoc2022
 
 import utils.BaseDay
 import utils.InputReader
+import utils.Point
+import utils.asString
 
 class Day10(input: String) : BaseDay<Int, String>() {
 
@@ -30,26 +32,15 @@ class Day10(input: String) : BaseDay<Int, String>() {
                 Pair(sum * offset, sum)
             }.first
 
-    fun drawAtCycle(cycle: Int): String =
-        cmds.subList(1, cycle + 1).chunked(20)
-            .foldIndexed(Pair("", 1)) { index, acc, ints ->
-                val offset = index * 20
-                var register = acc.second
-                Pair(
-                    acc.first + ints
-                        .mapIndexed { n, i ->
-                            val sprite = (offset + n) % 40
-                            (if (register in sprite - 1..sprite + 1) "#" else ".").also { register += i }
-                        }
-                        .joinToString("") + if (offset % 40 == 20) "\n" else "",
-                    register
-                )
-            }.first
 
     override fun solve1(): Int = listOf(20, 60, 100, 140, 180, 220).fold(0) { acc, index -> valueAtCycle(index) + acc }
 
     override fun solve2(): String =
-        drawAtCycle(240)
+        cmds.subList(1, cmds.size).foldIndexed(Pair(mutableMapOf<Point, Boolean>(), 1)) { index, acc, ints ->
+            val sprite = index % 40
+            acc.first[Point(sprite, index.floorDiv(40))] = acc.second in sprite - 1..sprite + 1
+            Pair(acc.first, acc.second + ints)
+        }.first.asString("")
 }
 
 fun main() {
