@@ -10,7 +10,6 @@ class Day11Test : BaseDayTest(2022, 11) {
         Day11(input).troop.let {
             it.size shouldBe 4
             it.first().items shouldBe mutableListOf(79, 98)
-            it.first().operation shouldBe listOf("old", "*", "19")
             it.first().testCondition shouldBe 23
             it.first().onTrue shouldBe 2
             it.first().onFalse shouldBe 3
@@ -35,21 +34,19 @@ class Day11Test : BaseDayTest(2022, 11) {
     @Test
     fun `part 2 after 1 round`() {
         val day = Day11(input, 1)
-        day.apply { round(); reduce() }
+        day.round()
         day.troop.map { it.inspectionCount() } shouldBe listOf(2, 4, 3, 6)
 
-        repeat(19) { day.apply { round(); reduce() } }
+        repeat(19) { day.round() }
         day.troop.map { it.inspectionCount() } shouldBe listOf(99, 97, 8, 103)
 
-        repeat(980) { day.apply { round(); reduce() } }
+        repeat(980) { day.round() }
         day.troop.map { it.inspectionCount() } shouldBe listOf(5204, 4792, 199, 5192)
     }
 
     @Test
     fun `solve part 2`() {
         val day = Day11(input, 1)
-        day.troop.first().inspectionCount() shouldBe 52166
-        day.troop.last().inspectionCount() shouldBe 52013
         day.solve2() shouldBe 2713310158
     }
 }

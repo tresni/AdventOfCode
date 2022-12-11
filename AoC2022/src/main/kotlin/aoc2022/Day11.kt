@@ -4,62 +4,55 @@ import utils.BaseDay
 import utils.InputReader
 import utils.lcm
 
-class Day11(input: String, val worryReduction: Int = 3) : BaseDay<Int, Long>() {
+class Day11(input: String, private val worryReduction: Int = 3) : BaseDay<Int, Long>() {
 
     val troop: MutableList<Monkey> = mutableListOf()
+    private val reducer: Int
 
     init {
         input.lines().chunked(7).forEach {
             troop.add(
                 Monkey(
                     troop,
-                    worryReduction,
-                    it[1].substringAfter(": ").split(", ").map { it.toLong() }.toMutableList(),
-                    it[2].substringAfter("= ").split(" "),
+                    it[1].substringAfter(": ").split(", ").map { i -> i.toLong() }.toMutableList(),
+                    it[2].substringAfter("= ")
+                        .split(" ")
+                        .let { o ->
+                            when (o[1]) {
+                                "+" -> { item -> item + (o[2].toLongOrNull() ?: item) }
+                                "*" -> { item -> item * (o[2].toLongOrNull() ?: item) }
+                                else -> { _ -> 0L }
+                            }
+                        },
                     it[3].split(" ").last().toInt(),
                     it[4].split(" ").last().toInt(),
                     it[5].split(" ").last().toInt()
                 )
             )
         }
+
+        reducer = lcm(troop.map { it.testCondition })
     }
 
     fun round() {
-        troop.forEach { monkey -> monkey.keepAway() }
-    }
-
-    fun reduce() {
-        val reducer =
-            lcm(troop[0].testCondition, troop[1].testCondition, *troop.drop(2).map { it.testCondition }.toIntArray())
-        troop.map {
-            it.items.replaceAll { worry ->
-                worry % reducer
-            }
-        }
+        troop.forEach { monkey -> monkey.keepAway(worryReduction) }
+        troop.forEach { monkey -> monkey.items.replaceAll { it % reducer } }
     }
 
     class Monkey(
-        val troop: MutableList<Monkey>,
-        val worryReduction: Int,
+        private val troop: MutableList<Monkey>,
         val items: MutableList<Long>,
-        val operation: List<String>,
+        val inspection: (Long) -> Long,
         val testCondition: Int,
         val onTrue: Int,
         val onFalse: Int,
         private var inspections: Int = 0
     ) {
-        fun keepAway() {
+        fun keepAway(worryReduction: Int) {
+            inspections += items.size
             items.forEach { item ->
-                val left = if (operation[0] == "old") item else operation[0].toLong()
-                val right = if (operation[2] == "old") item else operation[2].toLong()
-                val newWorry = when (operation[1]) {
-                    "+" -> left + right
-                    "*" -> left * right
-                    else -> 0
-                }.floorDiv(worryReduction)
-
+                val newWorry = inspection(item).floorDiv(worryReduction)
                 troop[if (newWorry % testCondition == 0L) onTrue else onFalse].items.add(newWorry)
-                inspections += 1
             }
             items.clear()
         }
@@ -67,27 +60,16 @@ class Day11(input: String, val worryReduction: Int = 3) : BaseDay<Int, Long>() {
         fun inspectionCount() = inspections
     }
 
-    override fun solve1(): Int {
-        repeat(20) {
-            round()
-        }
-        return troop
+    fun monkeySeeMonkeyDo(rounds: Int) = repeat(rounds) { round() }.run {
+        troop
             .sortedByDescending { it.inspectionCount() }
             .take(2)
-            .fold(1) { acc, monkey -> acc * monkey.inspectionCount() }
+            .fold(1L) { acc, monkey -> acc * monkey.inspectionCount() }
     }
 
-    override fun solve2(): Long {
-        repeat(10000) {
-            round()
-            reduce()
-        }
-        return troop
-            .sortedByDescending { it.inspectionCount() }
-            .take(2)
-            .fold(1) { acc, monkey -> acc * monkey.inspectionCount() }
-    }
+    override fun solve1() = monkeySeeMonkeyDo(20).toInt()
 
+    override fun solve2() = monkeySeeMonkeyDo(10_000)
 }
 
 fun main() {
