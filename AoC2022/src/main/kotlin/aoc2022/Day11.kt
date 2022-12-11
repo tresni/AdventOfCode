@@ -67,9 +67,8 @@ class Day11(input: String, private val worryReduction: Int = 3) : BaseDay<Int, L
     private fun monkeySeeMonkeyDo(rounds: Int): Long {
         repeat(rounds) { round() }
         return troop
-            .sortedByDescending { it.inspectionCount() }
-            .take(2)
-            .fold(1L) { acc, monkey -> acc * monkey.inspectionCount() }
+            .sortedByDescending(Monkey::inspectionCount)
+            .let { (first, second) -> first.inspectionCount().toLong() * second.inspectionCount() }
     }
 
     override fun solve1() = monkeySeeMonkeyDo(20).toInt()
