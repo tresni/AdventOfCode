@@ -35,8 +35,7 @@ class Day11(input: String, private val worryReduction: Int = 3) : BaseDay<Int, L
     }
 
     fun round() {
-        troop.forEach { monkey -> monkey.keepAway(worryReduction) }
-        troop.forEach { monkey -> monkey.items.replaceAll { it % reducer } }
+        troop.forEach { monkey -> monkey.keepAway(worryReduction, reducer) }
     }
 
     class Monkey(
@@ -48,10 +47,10 @@ class Day11(input: String, private val worryReduction: Int = 3) : BaseDay<Int, L
         val onFalse: Int,
         private var inspections: Int = 0
     ) {
-        fun keepAway(worryReduction: Int) {
+        fun keepAway(worryReduction: Int, reducer: Int) {
             inspections += items.size
             items.forEach { item ->
-                val newWorry = inspection(item).floorDiv(worryReduction)
+                val newWorry = inspection(item).floorDiv(worryReduction) % reducer
                 troop[if (newWorry % testCondition == 0L) onTrue else onFalse].items.add(newWorry)
             }
             items.clear()
