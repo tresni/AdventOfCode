@@ -13,7 +13,6 @@ class Day11(input: String, private val worryReduction: Int = 3) : BaseDay<Int, L
         input.lines().chunked(7).forEach {
             troop.add(
                 Monkey(
-                    troop,
                     it[1].substringAfter(": ").split(", ").map { i -> i.toLong() }.toMutableList(),
                     it[2].substringAfter("= ")
                         .split(" ")
@@ -34,33 +33,40 @@ class Day11(input: String, private val worryReduction: Int = 3) : BaseDay<Int, L
         reducer = lcm(troop.map { it.testCondition })
     }
 
-    fun round() {
-        troop.forEach { monkey -> monkey.keepAway(worryReduction, reducer) }
+    internal fun round() {
+        troop.forEach { monkey ->
+            monkey.inspectItems().forEach { item ->
+                val newWorry = item.floorDiv(worryReduction) % reducer
+                troop[monkey.findTarget(newWorry)].catch(newWorry)
+            }
+        }
     }
 
     class Monkey(
-        private val troop: MutableList<Monkey>,
         val items: MutableList<Long>,
-        val inspection: (Long) -> Long,
+        private val inspection: (Long) -> Long,
         val testCondition: Int,
         val onTrue: Int,
         val onFalse: Int,
         private var inspections: Int = 0
     ) {
-        fun keepAway(worryReduction: Int, reducer: Int) {
+        fun inspectItems(): Sequence<Long> = sequence {
             inspections += items.size
-            items.forEach { item ->
-                val newWorry = inspection(item).floorDiv(worryReduction) % reducer
-                troop[if (newWorry % testCondition == 0L) onTrue else onFalse].items.add(newWorry)
+            while (items.isNotEmpty()) {
+                yield(inspection(items.removeFirst()))
             }
-            items.clear()
         }
+
+        fun findTarget(item: Long) = if (item % testCondition == 0L) onTrue else onFalse
+
+        fun catch(item: Long) = items.add(item)
 
         fun inspectionCount() = inspections
     }
 
-    fun monkeySeeMonkeyDo(rounds: Int) = repeat(rounds) { round() }.run {
-        troop
+    private fun monkeySeeMonkeyDo(rounds: Int): Long {
+        repeat(rounds) { round() }
+        return troop
             .sortedByDescending { it.inspectionCount() }
             .take(2)
             .fold(1L) { acc, monkey -> acc * monkey.inspectionCount() }
