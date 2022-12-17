@@ -28,10 +28,26 @@ infix fun JsonArray.validPacket(other: JsonArray): Boolean? {
     }
 
     // we made it all the way through this array, that means if we have smaller array, we should return true
-    if (this.size <= other.size) {
+    if (this.size < other.size) {
         return true
+    } else if (this.size > other.size) {
+        return false
     }
     return null
+}
+
+fun String.asJsonArray() = Json.parseToJsonElement(this).jsonArray
+
+class CompareJsonArray {
+    companion object : Comparator<JsonArray> {
+        override fun compare(left: JsonArray, right: JsonArray): Int {
+            (left validPacket right)?.let {
+                if (it) return -1
+                else return 1
+            }
+            return 0
+        }
+    }
 }
 
 class Day13(input: String) : BaseDay<Int, Int>() {
@@ -59,7 +75,12 @@ class Day13(input: String) : BaseDay<Int, Int>() {
     }
 
     override fun solve2(): Int {
-        TODO("Not yet implemented")
+        val dividerPackets = listOf("[[2]]".asJsonArray(), "[[6]]".asJsonArray())
+        return valuePairs.flatMap { listOf(it.first, it.second) }.toMutableList().apply {
+            this.addAll(dividerPackets)
+        }.sortedWith(CompareJsonArray).let {
+            (it.indexOf(dividerPackets[0]) + 1) * (it.indexOf(dividerPackets[1]) + 1)
+        }
     }
 }
 

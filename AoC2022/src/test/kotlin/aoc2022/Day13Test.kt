@@ -1,15 +1,10 @@
 package aoc2022
 
 import io.kotest.matchers.shouldBe
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonArray
 import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 
 class Day13Test : BaseDayTest(2022, 13) {
-
-    fun String.asJsonArray() = Json.parseToJsonElement(this).jsonArray
-
     @Test
     fun examples() {
         "[1,1,3,1,1]".asJsonArray() validPacket "[1,1,5,1,1]".asJsonArray() shouldBe true
@@ -32,6 +27,11 @@ class Day13Test : BaseDayTest(2022, 13) {
     @Test
     fun `solves part 1 example`() {
         Day13(input).solve1() shouldBe 13
+    }
+
+    @Test
+    fun `solves part 2 example`() {
+        Day13(input).solve2() shouldBe 140
     }
 
 }
