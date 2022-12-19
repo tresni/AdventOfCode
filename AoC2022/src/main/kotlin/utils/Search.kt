@@ -1,23 +1,24 @@
-package utils.search
+package utils
 
-import utils.Point
-
-fun bfs(start: Point, end: (Point) -> Boolean, check: (Point, Point) -> Boolean = { _, _ -> true }): Int? {
-    val searched = mutableMapOf<Point, Point?>(start to null) // key = child, value = parent
+fun <T> bfs(
+    start: T,
+    end: (T) -> Boolean,
+    neighbors: (T) -> List<T>,
+    check: (T, T) -> Boolean = { _, _ -> true }
+): List<T>? {
+    val searched = mutableMapOf<T, T?>(start to null) // key = child, value = parent
     val queue = mutableListOf(start)
     while (queue.isNotEmpty()) {
         val investigate = queue.removeFirst()
         if (end(investigate)) {
-            var n: Point? = investigate
-            var i = 0
-            while (n != start) {
-                n = searched[n]
-                i++
+            val path = mutableListOf<T>(investigate)
+            while (path.last() != start) {
+                searched[path.last() ?: break]?.let { path.add(it) }
             }
-            return i
+            return path
         }
 
-        investigate.neighboursNotDiagonal.forEach {
+        neighbors(investigate).forEach {
             if (it in searched) return@forEach
             if (check(investigate, it)) {
                 searched[it] = investigate

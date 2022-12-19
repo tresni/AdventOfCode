@@ -3,7 +3,7 @@ package aoc2022
 import utils.BaseDay
 import utils.InputReader
 import utils.Point
-import utils.search.bfs
+import utils.bfs
 
 class Day12(input: String) : BaseDay<Int, Int>() {
 
@@ -32,15 +32,15 @@ class Day12(input: String) : BaseDay<Int, Int>() {
     }
 
     override fun solve1(): Int {
-        return bfs(start, { point -> point == end }) { start, end ->
+        return bfs(start, { point -> point == end }, { p -> p.neighboursNotDiagonal }) { start, end ->
             end in topoMap && (topoMap[end]?.code ?: 0) - (topoMap[start]?.code ?: 0) <= 1
-        } ?: 0
+        }?.size ?: 0
     }
 
     override fun solve2(): Int {
-        return bfs(end, { point -> topoMap[point] == 'a' }) { start, end ->
+        return bfs(end, { point -> topoMap[point] == 'a' }, { p -> p.neighboursNotDiagonal }) { start, end ->
             end in topoMap && (topoMap[start]?.code ?: 0) - (topoMap[end]?.code ?: 0) <= 1
-        } ?: 0
+        }?.size ?: 0
     }
 }
 
