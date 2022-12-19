@@ -1,96 +1,83 @@
 package aoc2022
 
 import utils.BaseDay
-
-class Valve(val name: String, val pressure: Int) {
-    private var open: Boolean = false
-    private val neighbors: MutableList<Valve> = mutableListOf()
-
-    fun generatePaths(visited: List<Valve> = emptyList()): Sequence<List<Valve>> = sequence {
-        val newPath = visited.plus(this@Valve)
-        if (!isOpen()) yield(newPath)
-
-        neighbors.forEach {
-            if (it !in visited)
-                yieldAll(it.generatePaths(newPath))
-        }
-    }
-
-    fun bestMove(startTime: Int): List<Valve> =
-        generatePaths().maxByOrNull { (startTime - (it.size + 1)) * it.last().pressure } ?: emptyList()
-
-    fun openValve(): Int {
-        open = true
-        return pressure
-    }
-
-    fun isOpen() = open || pressure == 0
-
-    fun setNeighbors(n: List<Valve>) = neighbors.apply { clear(); addAll(n) }
-}
+import utils.InputReader
+import utils.bfs
 
 class Day15(input: String) : BaseDay<Int, Int>() {
     val EXPLOSION_TIME = 30
     val LINE_REGEX =
         "Valve ([A-Z]{2}) has flow rate=(\\d+); tunnels? leads? to valves? ((?:[A-Z]{2}(?:, )?)+)".toRegex()
-    var currentPosition: Valve
+
+    val fullGraph = mutableMapOf<String, Pair<Int, List<String>>>()
+    val valveMap = mutableMapOf<Pair<String, String>, Int>()
 
     init {
-        val valveIndex /* heh */: MutableMap<String, Pair<Valve, List<String>>> = mutableMapOf()
         input.lines().forEach {
             LINE_REGEX.find(it)?.let { match ->
-                valveIndex[match.groupValues[1]] =
-                    Pair(Valve(match.groupValues[1], match.groupValues[2].toInt()), match.groupValues[3].split(", "))
+                val name = match.groupValues[1]
+                val pressure = match.groupValues[2].toInt()
+                val connections = match.groupValues[3].split(", ")
+                fullGraph[name] = Pair(pressure, connections)
             } ?: error("Well that didn't work: $it")
         }
 
-        valveIndex.values.forEach { (valve, neighbors) ->
-            valve.setNeighbors(neighbors.mapNotNull { valveIndex[it]?.first })
+        val valvesToOpen = fullGraph.filter { it.value.first != 0 }
+        val remaining = valvesToOpen.toMutableMap()
+        valvesToOpen.forEach { (key, _) ->
+            valveMap[Pair("AA", key)] = bfs("AA", { t -> t == key }, { t -> fullGraph[t]!!.second })!!.size
+            remaining.remove(key)
+            remaining.forEach { (target, _) ->
+                val distance = bfs(key, { t -> t == target }, { t -> fullGraph[t]!!.second })!!.size
+                valveMap[Pair(key, target)] = distance
+                valveMap[Pair(target, key)] = distance
+            }
         }
 
-        currentPosition = valveIndex["AA"]?.first ?: error("FML")
+        println(valveMap)
+    }
+
+    fun dfs(
+        graph: MutableMap<Pair<String, String>, Int>,
+        start: String,
+        offset: Int = EXPLOSION_TIME,
+        acc: Int = 0,
+        history: List<String> = emptyList()
+    ): Int {
+        val neighbors = graph.filterKeys { (key, target) -> key == start && target !in history }
+        val node = fullGraph[start]!!
+        val steam = node.first * offset
+        if (neighbors.isEmpty())
+            return acc + steam
+
+        return neighbors.maxOf { (pair, distance) ->
+            if (distance < offset) {
+                dfs(
+                    graph,
+                    pair.second,
+                    offset - distance,
+                    acc + steam,
+                    history.plus(pair.second)
+                )
+            } else {
+                acc + steam
+            }
+        }
     }
 
     override fun solve1(): Int {
-        var timeIndex = 0
-        var totalPressure = 0
-        var currentPressure = 0
-        while (timeIndex < EXPLOSION_TIME) {
-            val timeRemaining = EXPLOSION_TIME - timeIndex
-            currentPosition = currentPosition.bestMove(timeRemaining)
-                .reduceOrNull { _, valve ->
-                    println("== Minute ${timeIndex + 1} ==")
-                    println("Releasing $currentPressure pressure (total ${totalPressure + currentPressure})")
-                    println("You move to valve ${valve.name}")
-                    println()
-                    timeIndex += 1
-                    if (timeIndex < EXPLOSION_TIME) totalPressure += currentPressure
-                    valve
-                } ?: run {
-                for (i in timeIndex until EXPLOSION_TIME) {
-                    println("== Minute ${timeIndex + 1} ==")
-                    println("Releasing $currentPressure pressure (total ${totalPressure + currentPressure})")
-                    println()
-                    timeIndex += 1
-                    totalPressure += currentPressure
-                }
-                currentPosition
-            }
-
-
-            if (!currentPosition.isOpen()) {
-                println("== Minute ${timeIndex + 1} ==")
-                println("Releasing $currentPressure pressure (total ${totalPressure})")
-                println("You open valve ${currentPosition.name}")
-                println()
-                currentPressure += currentPosition.openValve()
-                timeIndex += 1
-            }
-        }
-        return totalPressure
+        return dfs(valveMap, "AA")
     }
 
     override fun solve2(): Int {
         TODO("Not yet implemented")
+    }
+}
+
+fun main() {
+    val input = InputReader.inputAsString(2022, 15)
+    Day15(input).apply {
+        println(solve1())
+        println(solve2())
     }
 }
