@@ -42,4 +42,16 @@ object InputReader {
 fun <T> List<List<T>>.transpose(): List<List<T>> =
     this[0].indices.map { j -> this.indices.reversed().map { i -> this[i][j] } }
 
+fun <T> List<T>.allDistinct() = this.size == this.distinct().size
+
+fun <T> List<T>.combinations(depth: Int = this.size): List<List<T>> {
+    var result = this.map { listOf(it) }
+    repeat(depth - 1) {
+        result = result.zipInList(this).filter { it.allDistinct() }
+    }
+    return result
+}
+
+fun <T> List<List<T>>.zipInList(list: List<T>): List<List<T>> = this.flatMap { x -> list.map { x.plus(it) } }
+
 fun String.easyReading() = this.replace("#", "█").replace(".", " ")

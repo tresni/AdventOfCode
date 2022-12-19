@@ -1,8 +1,7 @@
 package aoc2022
 
-import utils.BaseDay
-import utils.InputReader
-import utils.bfs
+import utils.*
+import kotlin.system.measureTimeMillis
 
 class Day15(input: String) : BaseDay<Int, Int>() {
     val EXPLOSION_TIME = 30
@@ -33,8 +32,53 @@ class Day15(input: String) : BaseDay<Int, Int>() {
                 valveMap[Pair(target, key)] = distance
             }
         }
+    }
 
-        println(valveMap)
+    fun multidfs(
+        graph: MutableMap<Pair<String, String>, Int>,
+        start: List<String>,
+        offset: List<Int>,
+        acc: Int,
+        history: List<List<String>>
+    ): Int {
+        val nodes = fullGraph.filterKeys { it in start }
+        val steam = nodes.map { (key, value) ->
+            val index = start.indexOf(key)
+            if (offset[index] >= 0)
+                value.first * offset[index]
+            else
+                0
+        }.sum()
+
+        val neighbors = graph
+            .filterKeys { (key, target) -> key in start && target !in history.flatten() }
+            .toList()
+            .groupBy { (k, _) -> k.first }
+
+        if (neighbors.isEmpty())
+            return acc + steam
+
+        var combinations = neighbors[start[0]]!!.map { listOf(it.first.second) }
+        repeat(start.size - 1) { index ->
+            val node = start[index + 1]
+            combinations = combinations
+                .zipInList(
+                    neighbors[node]!!
+                        .map { it.first.second }
+                        .filter { graph[Pair(node, it)]!! < offset[index + 1] }
+                )
+                .filter { it.allDistinct() }
+        }
+
+        return combinations.maxOfOrNull {
+            multidfs(
+                graph,
+                it,
+                it.mapIndexed { index, s -> offset[index] - graph[Pair(start[index], s)]!! },
+                acc + steam,
+                it.mapIndexed { index, s -> history[index].plus(s) }
+            )
+        } ?: (acc + steam)
     }
 
     fun dfs(
@@ -70,14 +114,22 @@ class Day15(input: String) : BaseDay<Int, Int>() {
     }
 
     override fun solve2(): Int {
-        TODO("Not yet implemented")
+        return multidfs(valveMap, listOf("AA", "AA"), listOf(26, 26), 0, listOf(emptyList(), emptyList()))
     }
 }
 
 fun main() {
     val input = InputReader.inputAsString(2022, 15)
     Day15(input).apply {
-        println(solve1())
-        println(solve2())
+        measureTimeMillis {
+            println(solve1())
+        }.also {
+            println("Solved in ${"%.2f".format(it.div(1000.0))}s")
+        }
+        measureTimeMillis {
+            println(solve2())
+        }.also {
+            println("Solved in ${"%.2f".format(it.div(1000.0))}s")
+        }
     }
 }
