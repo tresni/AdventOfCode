@@ -5,22 +5,22 @@ import org.junit.jupiter.api.Test
 import utils.BaseDayTest
 import kotlin.system.measureTimeMillis
 
-class Day16Test : BaseDayTest(2022, 15) {
+class Day16Test : BaseDayTest(2022, 16) {
     @Test
     fun solve1() {
         measureTimeMillis {
-            Day15(input).solve1() shouldBe 1651
+            Day16(input).solve1() shouldBe 1651
         }.also {
-            println("Solved part 1 in ${"%.2f".format(it.div(1000.0))}s")
+            println("Solved part 1 in ${"%.3f".format(it.div(1000.0))}s")
         }
     }
 
     @Test
     fun solve2() {
         measureTimeMillis {
-            Day15(input).solve2() shouldBe 1707
+            Day16(input).solve2() shouldBe 1707
         }.also {
-            println("Solved part 2 in ${"%.2f".format(it.div(1000.0))}s")
+            println("Solved part 2 in ${"%.3f".format(it.div(1000.0))}s")
         }
     }
 

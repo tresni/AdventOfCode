@@ -42,16 +42,15 @@ object InputReader {
 fun <T> List<List<T>>.transpose(): List<List<T>> =
     this[0].indices.map { j -> this.indices.reversed().map { i -> this[i][j] } }
 
-fun <T> List<T>.allDistinct() = this.size == this.distinct().size
+// from https://github.com/nkiesel/AdventOfCode_2022/blob/main/src/test/kotlin/Util.kt
+fun <T> Collection<T>.powerSet(): Set<Set<T>> = powerSet(this, setOf(emptySet()))
 
-fun <T> List<T>.combinations(depth: Int = this.size): List<List<T>> {
-    var result = this.map { listOf(it) }
-    repeat(depth - 1) {
-        result = result.zipInList(this).filter { it.allDistinct() }
+private tailrec fun <T> powerSet(left: Collection<T>, acc: Set<Set<T>>): Set<Set<T>> {
+    return if (left.isEmpty()) {
+        acc
+    } else {
+        powerSet(left.drop(1), acc + acc.map { it + left.first() })
     }
-    return result
 }
-
-fun <T> List<List<T>>.zipInList(list: List<T>): List<List<T>> = this.flatMap { x -> list.map { x.plus(it) } }
 
 fun String.easyReading() = this.replace("#", "█").replace(".", " ")

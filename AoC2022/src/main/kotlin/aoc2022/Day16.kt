@@ -1,9 +1,12 @@
 package aoc2022
 
-import utils.*
+import utils.BaseDay
+import utils.InputReader
+import utils.bfs
+import utils.powerSet
 import kotlin.system.measureTimeMillis
 
-class Day15(input: String) : BaseDay<Int, Int>() {
+class Day16(input: String) : BaseDay<Int, Int>() {
     val EXPLOSION_TIME = 30
     val LINE_REGEX =
         "Valve ([A-Z]{2}) has flow rate=(\\d+); tunnels? leads? to valves? ((?:[A-Z]{2}(?:, )?)+)".toRegex()
@@ -34,55 +37,8 @@ class Day15(input: String) : BaseDay<Int, Int>() {
         }
     }
 
-    fun multidfs(
-        graph: MutableMap<Pair<String, String>, Int>,
-        start: List<String>,
-        offset: List<Int>,
-        acc: Int,
-        history: List<List<String>>
-    ): Int {
-        val nodes = fullGraph.filterKeys { it in start }
-        val steam = nodes.map { (key, value) ->
-            val index = start.indexOf(key)
-            if (offset[index] >= 0)
-                value.first * offset[index]
-            else
-                0
-        }.sum()
-
-        val neighbors = graph
-            .filterKeys { (key, target) -> key in start && target !in history.flatten() }
-            .toList()
-            .groupBy { (k, _) -> k.first }
-
-        if (neighbors.isEmpty())
-            return acc + steam
-
-        var combinations = neighbors[start[0]]!!.map { listOf(it.first.second) }
-        repeat(start.size - 1) { index ->
-            val node = start[index + 1]
-            combinations = combinations
-                .zipInList(
-                    neighbors[node]!!
-                        .map { it.first.second }
-                        .filter { graph[Pair(node, it)]!! < offset[index + 1] }
-                )
-                .filter { it.allDistinct() }
-        }
-
-        return combinations.maxOfOrNull {
-            multidfs(
-                graph,
-                it,
-                it.mapIndexed { index, s -> offset[index] - graph[Pair(start[index], s)]!! },
-                acc + steam,
-                it.mapIndexed { index, s -> history[index].plus(s) }
-            )
-        } ?: (acc + steam)
-    }
-
     fun dfs(
-        graph: MutableMap<Pair<String, String>, Int>,
+        graph: Map<Pair<String, String>, Int>,
         start: String,
         offset: Int = EXPLOSION_TIME,
         acc: Int = 0,
@@ -114,13 +70,20 @@ class Day15(input: String) : BaseDay<Int, Int>() {
     }
 
     override fun solve2(): Int {
-        return multidfs(valveMap, listOf("AA", "AA"), listOf(26, 26), 0, listOf(emptyList(), emptyList()))
+        val valveList = valveMap.map { (key, _) -> key.second }.toSet()
+        return valveList.powerSet().maxOf {
+            val windows = setOf("AA").plus(it)
+            val elephants = setOf("AA").plus(valveList - it)
+
+            dfs(valveMap.filterKeys { k -> k.first in windows && k.second in windows }, "AA", 26) +
+                dfs(valveMap.filterKeys { k -> k.first in elephants && k.second in elephants }, "AA", 26)
+        }
     }
 }
 
 fun main() {
-    val input = InputReader.inputAsString(2022, 15)
-    Day15(input).apply {
+    val input = InputReader.inputAsString(2022, 16)
+    Day16(input).apply {
         measureTimeMillis {
             println(solve1())
         }.also {
