@@ -99,10 +99,7 @@ fun <T> MutableMap<Point, T>.manhattanFill(start: Point, radius: Int, value: T) 
     for (x in -absRadius..absRadius) {
         val offset = if (x.sign == 1) absRadius - x else absRadius + x
         for (y in -offset..offset) {
-            start.move(x, y).let {
-                if (it in this) return@let
-                set(it, value)
-            }
+            set(start.move(x, y), value)
         }
     }
 }
