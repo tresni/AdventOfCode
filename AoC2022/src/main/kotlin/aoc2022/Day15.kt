@@ -26,29 +26,6 @@ class Day15(input: String) : BaseDay<Int, Long>() {
         }
     }
 
-    /*signalMap[signal] = 'S'
-        signalMap[beacon] = 'B'
-        val md = signal manhattanDistanceTo beacon
-        for (y in -md..md) {
-            val offset = if (y.sign == 1) md - y else md + y
-            signalLines.getOrPut(y) { mutableListOf() }.let { lines ->
-                val (positiveOffset, negativeOffset) = Pair(signal.x + offset, signal.x - offset)
-                val toRemove = lines.filter { p ->
-                    (p.second in negativeOffset..positiveOffset) ||
-                        (p.first in negativeOffset..positiveOffset)
-                }.also { pairs ->
-                    // we know there is overlap, so we want the top and bottom of each
-                    val min = (listOf(negativeOffset) + pairs.map { p -> p.first }).min()
-                    val max = (listOf(positiveOffset) + pairs.map { p -> p.second }).max()
-                    lines.add(Pair(min, max))
-                }
-                lines.removeAll(toRemove)
-            }
-        }
-    }
-
-     */
-
     fun searcher(row: Int) = setup
         .mapNotNull { (signal, _, md) ->
             if (row in signal.y - md..signal.y + md) {
