@@ -1,9 +1,6 @@
 package utils
 
-import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.sign
-import kotlin.math.sqrt
+import kotlin.math.*
 
 data class Point(
     val x: Int,
@@ -94,6 +91,19 @@ data class Point(
 
     companion object {
         val ORIGIN = Point(0, 0)
+    }
+}
+
+fun <T> MutableMap<Point, T>.manhattanFill(start: Point, radius: Int, value: T) {
+    val absRadius = radius.absoluteValue
+    for (x in -absRadius..absRadius) {
+        val offset = if (x.sign == 1) absRadius - x else absRadius + x
+        for (y in -offset..offset) {
+            start.move(x, y).let {
+                if (it in this) return@let
+                set(it, value)
+            }
+        }
     }
 }
 
