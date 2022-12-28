@@ -54,3 +54,9 @@ private tailrec fun <T> powerSet(left: Collection<T>, acc: Set<Set<T>>): Set<Set
 }
 
 fun String.easyReading() = this.replace("#", "█").replace(".", " ")
+
+fun <T> Sequence<T>.infinite() = sequence {
+    while (true) {
+        yieldAll(this@infinite)
+    }
+}

@@ -128,3 +128,24 @@ fun <T> Map<Point, T>.asString(
             }
         }
 }
+
+fun Map<Point, Boolean>.asStringDesc(
+    prefix: String = "\n",
+): String = asStringDesc(prefix) { x, y -> if (get(Point(x, y)) == true) "█" else " " }
+
+fun <T> Map<Point, T>.asStringDesc(
+    prefix: String = "\n",
+    producer: (x: Int, y: Int) -> CharSequence = { x, y -> get(Point(x, y))?.toString() ?: " " }
+): String {
+    val minX = keys.minOf { it.x }
+    val maxX = keys.maxOf { it.x }
+    val minY = keys.minOf { it.y }
+    val maxY = keys.maxOf { it.y }
+    return (minY..maxY)
+        .reversed()
+        .joinToString(prefix = prefix, separator = "\n") { y ->
+            (minX..maxX).joinToString(separator = "") { x ->
+                producer(x, y)
+            }
+        }
+}

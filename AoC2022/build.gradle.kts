@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.incremental.mkdirsOrThrow
 import java.util.*
 
 plugins {
@@ -97,15 +98,22 @@ open class GenerateTask : DefaultTask() {
                 .replace("{{year}}", year)
                 .replace("{{day}}", day)
         )
+
         File("src/test/kotlin/aoc$year/Day${day}Test.kt").writeText(
             TEMPLATE_TEST
                 .replace("{{year}}", year)
                 .replace("{{day}}", day)
         )
+
         listOf(
             "src/main/resources/$year/Day$day/input.txt",
             "src/test/resources/$year/Day$day/input.txt",
-        ).forEach { File(it) }
+        ).forEach {
+            File(it).apply {
+                this.parentFile.mkdirsOrThrow()
+                writeText("")
+            }
+        }
     }
 }
 
