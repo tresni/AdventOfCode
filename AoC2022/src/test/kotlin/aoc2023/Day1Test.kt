@@ -17,7 +17,7 @@ class Day1Test : BaseDayTest(2023, 1) {
     }
 
     @Test
-    fun `stupid`() {
+    fun stupid() {
         Day1().findUpdatedCalibrationValue(listOf("eightwone")) shouldBe 81
     }
 }
