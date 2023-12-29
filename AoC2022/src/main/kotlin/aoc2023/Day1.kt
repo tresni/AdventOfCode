@@ -3,49 +3,29 @@ package aoc2023
 import utils.*
 
 class Day1 : BaseDay<Int, Int>() {
-    override fun solve1(): Int =findCalibrationValue(
-            InputReader.inputAsString(2023, 1).lines()
-        )
+    private val digits = (0..9).map { it.toString() }
+    private val words = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
+    
+    override fun solve1(): Int = findCalibrationValue(InputReader.inputAsList(2023, 1))
+    override fun solve2(): Int = findUpdatedCalibrationValue(InputReader.inputAsList(2023, 1))
 
-    override fun solve2(): Int = findUpdatedCalibrationValue(
-        InputReader.inputAsList(2023, 1)
-    )
-
-    fun findCalibrationValue(input: List<String>): Int {
-        val first = Regex("(\\d).*")
-        val last = Regex(".*(\\d)")
-        return input.mapNotNull {
-            "${first.find(it)?.groups?.get(1)?.value}${last.find(it)?.groups?.get(1)?.value}".toInt()
-        }.sum()
+    fun findCalibrationValue(input: List<String>): Int = input.sumOf {
+        it.findAnyOf(digits)!!.second.toInt() * 10 +
+            it.findLastAnyOf(digits)!!.second.toInt()
     }
 
-    fun findUpdatedCalibrationValue(input: List<String>): Int {
-        return findCalibrationValue(
-            input.map { line ->
-                line.mapIndexedNotNull { index, s ->
-                    try {
-                        when (s) {
-                            in '0'..'9' -> s
-                            'o' -> if (line.substring(index..index + 2) == "one") '1' else null
-                            't' -> if (line.substring(index..index + 2) == "two") '2' else if (line.substring(index..index + 4) == "three") '3' else null
-                            'f' -> when (line.substring(index..index + 3)) {
-                                "four" -> '4'
-                                "five" -> '5'
-                                else -> null
-                            }
+    fun findUpdatedCalibrationValue(input: List<String>): Int = input.sumOf {
+        it.findAnyOf(digits + words)!!.second.fromDigit() * 10 +
+            it.findLastAnyOf(digits + words)!!.second.fromDigit()
+    }
 
-                            's' -> if (line.substring(index..index + 2) == "six") '6' else if (line.substring(index..index + 4) == "seven") '7' else null
-                            'e' -> if (line.substring(index..index + 4) == "eight") '8' else null
-                            'n' -> if (line.substring(index..index + 3) == "nine") '9' else null
-                            else -> null
-                        }
-                    }
-                    catch (_: IndexOutOfBoundsException) {
-                        null
-                    }
-                }.joinToString("")
-            }
-        )
+    private fun String.fromDigit(): Int {
+        val index = words.indexOf(this)
+        return if (index == -1) {
+            this.toInt()
+        } else {
+            index + 1
+        }
     }
 }
 
