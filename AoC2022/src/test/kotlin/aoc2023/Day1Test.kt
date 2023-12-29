@@ -15,4 +15,9 @@ class Day1Test : BaseDayTest(2023, 1) {
         val part2Input = InputReader.inputAsString(2023, 1, "2")
         Day1().findUpdatedCalibrationValue(part2Input.lines()) shouldBe 281
     }
+
+    @Test
+    fun `stupid`() {
+        Day1().findUpdatedCalibrationValue(listOf("eightwone")) shouldBe 81
+    }
 }

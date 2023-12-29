@@ -20,23 +20,32 @@ class Day1 : BaseDay<Int, Int>() {
     }
 
     fun findUpdatedCalibrationValue(input: List<String>): Int {
-        val words = Regex("one|two|three|four|five|six|seven|eight|nine")
-        return findCalibrationValue(input.map {
-            words.replace(it) { result ->
-                when (result.value) {
-                    "one" -> "1"
-                    "two" -> "2"
-                    "three" -> "3"
-                    "four" -> "4"
-                    "five" -> "5"
-                    "six" -> "6"
-                    "seven" -> "7"
-                    "eight" -> "8"
-                    "nine" -> "9"
-                    else -> "?"
-                }
+        return findCalibrationValue(
+            input.map { line ->
+                line.mapIndexedNotNull { index, s ->
+                    try {
+                        when (s) {
+                            in '0'..'9' -> s
+                            'o' -> if (line.substring(index..index + 2) == "one") '1' else null
+                            't' -> if (line.substring(index..index + 2) == "two") '2' else if (line.substring(index..index + 4) == "three") '3' else null
+                            'f' -> when (line.substring(index..index + 3)) {
+                                "four" -> '4'
+                                "five" -> '5'
+                                else -> null
+                            }
+
+                            's' -> if (line.substring(index..index + 2) == "six") '6' else if (line.substring(index..index + 4) == "seven") '7' else null
+                            'e' -> if (line.substring(index..index + 4) == "eight") '8' else null
+                            'n' -> if (line.substring(index..index + 3) == "nine") '9' else null
+                            else -> null
+                        }
+                    }
+                    catch (_: IndexOutOfBoundsException) {
+                        null
+                    }
+                }.joinToString("")
             }
-        })
+        )
     }
 }
 
